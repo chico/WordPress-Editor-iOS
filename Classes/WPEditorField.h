@@ -7,6 +7,8 @@
  */
 @property (nonatomic, strong, readwrite) UIView* inputAccessoryView;
 
+@property (assign) int tag;
+
 /**
  *  @brief      nodeId      The ID of the HTML node this editor field wraps.
  */

@@ -128,7 +128,7 @@
         CGFloat mainWidth = self.moreButton.frame.origin.x + self.moreButton.frame.size.width;
         self.formatView.frame = CGRectMake(0, 0, mainWidth, height);
         self.formatView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-        
+    
         [self.formatView addSubview:self.boldButton];
         [self.formatView addSubview:self.italicsButton];
         [self.formatView addSubview:self.underlineButton];
@@ -226,7 +226,8 @@
     return self;
 }
 
-- (void)setupBackground {}
+- (void)setupBackground {
+}
 
 #pragma mark - UIInputViewAudioFeedback
 

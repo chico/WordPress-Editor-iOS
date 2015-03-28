@@ -95,6 +95,8 @@ typedef enum
  */
 - (void)editorToolbarView:(WPEditorToolbarView*)editorToolbarView
            showHTMLSource:(UIBarButtonItem *)barButtonItem;
+- (void)btnMorePressed:(UIButton *)sender;
+
 @end
 
 /**

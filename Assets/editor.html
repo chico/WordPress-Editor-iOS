@@ -840,7 +840,7 @@ function style_html(html_source, options) {
             margin:0;
             font-family:OpenSans, sans-serif;
             font-size:1em;
-            color:#2D2D2D;
+            color:white;
         }
 
         body {
@@ -856,12 +856,11 @@ function style_html(html_source, options) {
         p {
             line-height: 24px;
             margin-top: 0px;
-            margin-bottom: 24px;
+            margin-bottom: 5px;
         }
     
         hr {
             border: none;
-            height: 1px;
             color: #e8f0f5;
             background-color: #e8f0f5;
             width: 100%;
@@ -873,7 +872,7 @@ function style_html(html_source, options) {
             margin: 0px 0 0px 0;
             min-width: 30px;
             min-height: 30px;
-            max-width: 100%;
+            max-width: 80%;
             opacity:1;
         }
     
@@ -1025,7 +1024,7 @@ function style_html(html_source, options) {
             appearance: none;
             position: absolute;
             top:-2pt; height:2pt;
-            left:0px; width:100%;
+            left:0px; width:80%;
         }
         
         progress.wp_media_indicator::-webkit-progress-bar {
@@ -1059,7 +1058,7 @@ function style_html(html_source, options) {
         }
     
         div.field[placeholderText][contenteditable=true]:empty:focus:before {
-            opacity: 0.6;
+            opacity: 0.9;
         }
     
         #separatorDiv {
@@ -1071,12 +1070,12 @@ function style_html(html_source, options) {
         #zss_field_title, #zss_field_title p {
             font-family:'Merriweather', serif;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 28px;
             margin-bottom: 0px;
         }
     
         #zss_field_content {
-            margin-bottom: 10px;
+            padding-bottom: 90px;
         }
 
         .wp-temp[data-wp-temp="caption"] {
@@ -1109,9 +1108,6 @@ function style_html(html_source, options) {
   </head>
   <body>
       <div contenteditable="false" id="zss_field_title" class="field" nostyle>
-      </div>
-      <div contenteditable="false" id="separatorDiv" >
-          <hr/>
       </div>
       <div contenteditable="false" id="zss_field_content" class="field">
       </div>

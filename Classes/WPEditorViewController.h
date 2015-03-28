@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 #import "HRColorPickerViewController.h"
+#import "BSKeyboardControls.h"
 
 @class WPEditorField;
 @class WPEditorView;
@@ -23,7 +24,7 @@ WPEditorViewControllerMode;
 - (void)editorTitleDidChange:(WPEditorViewController *)editorController;
 - (void)editorTextDidChange:(WPEditorViewController *)editorController;
 - (void)editorDidPressMedia:(WPEditorViewController *)editorController;
-
+- (void)editorDidPressTrash:(WPEditorViewController *)editorController;
 
 /**
  *	@brief		Received when the field is created and can be used.
@@ -80,6 +81,7 @@ WPEditorViewControllerMode;
 @property (nonatomic, copy) NSString *titlePlaceholderText;
 @property (nonatomic, copy) NSString *bodyText;
 @property (nonatomic, copy) NSString *bodyPlaceholderText;
+@property (nonatomic, strong) BSKeyboardControls *keyboardControls;
 
 #pragma mark - Properties: Editor View
 @property (nonatomic, strong, readonly) WPEditorView *editorView;
