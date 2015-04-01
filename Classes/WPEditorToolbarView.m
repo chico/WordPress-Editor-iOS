@@ -210,9 +210,9 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
     
     UIScrollView* toolbarScroll = [[UIScrollView alloc] initWithFrame:toolbarScrollFrame];
     toolbarScroll.showsHorizontalScrollIndicator = NO;
-    if (IS_IPAD) {
+    //if (IS_IPAD) {
         toolbarScroll.scrollEnabled = NO;
-    }
+    //}
     toolbarScroll.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
     [self.contentView addSubview:toolbarScroll];
