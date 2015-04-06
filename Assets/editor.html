@@ -835,14 +835,7 @@ function style_html(html_source, options) {
             padding:0;
             box-sizing: border-box;
         }
-        
-        html, body {
-            margin:0;
-            font-family:OpenSans, sans-serif;
-            font-size:1em;
-            color:white;
-        }
-
+    
         body {
             padding-left:5px;
             padding-right:5px;
@@ -1067,6 +1060,13 @@ function style_html(html_source, options) {
             padding-right: 10px;
         }
     
+        html, body {
+            margin:0;
+            font-family:OpenSans, sans-serif;
+            font-size:1em;
+            color:white;
+        }
+
         #zss_field_title, #zss_field_title p {
             font-family:'Merriweather', serif;
             font-weight: bold;
@@ -1076,6 +1076,7 @@ function style_html(html_source, options) {
     
         #zss_field_content {
             padding-bottom: 90px;
+            padding-right: 22px;
         }
 
         .wp-temp[data-wp-temp="caption"] {
@@ -1107,7 +1108,7 @@ function style_html(html_source, options) {
     </style>
   </head>
   <body>
-      <div contenteditable="false" id="zss_field_title" class="field" nostyle>
+      <div contenteditable="false" id="zss_field_title" class="field" nostyle >
       </div>
       <div contenteditable="false" id="zss_field_content" class="field">
       </div>

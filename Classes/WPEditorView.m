@@ -156,7 +156,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
     NSAssert(!_sourceView, @"The source view must not exist when this method is called!");
     
     _sourceView = [[ZSSTextView alloc] initWithFrame:frame];
-    _sourceView.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    _sourceView.autocapitalizationType = UITextAutocapitalizationTypeWords;
     _sourceView.autocorrectionType = UITextAutocorrectionTypeNo;
     _sourceView.autoresizingMask =  UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     _sourceView.autoresizesSubviews = YES;
@@ -184,7 +184,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
     _webView.usesGUIFixes = YES;
     _webView.keyboardDisplayRequiresUserAction = NO;
     _webView.scrollView.bounces = YES;
-
+    
     [self startObservingWebViewContentSizeChanges];
     
 	[self addSubview:_webView];

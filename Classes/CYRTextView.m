@@ -98,7 +98,7 @@ static const float kCursorVelocity = 1.0f/8.0f;
     
     // Setup defaults
     self.font = [UIFont fontWithName: @"Menlo-Regular" size:14.0f];
-    self.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    self.autocapitalizationType = UITextAutocapitalizationTypeWords;
     self.autocorrectionType     = UITextAutocorrectionTypeNo;
     self.lineCursorEnabled = NO;
 
