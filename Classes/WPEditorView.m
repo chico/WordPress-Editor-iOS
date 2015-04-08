@@ -561,6 +561,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
         }  else if ([self isImageReplacedScheme:scheme]) {
             [self handleImageReplacedCallback:url];
             handled = YES;
+        } else if ([self isTitleReturnCallbackScheme:scheme]) {
+            [self.contentField focus];
+            handled = YES;
         }
     }
 	
@@ -947,6 +950,13 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 	return [scheme isEqualToString:kCallbackScheme];
 }
 
+- (BOOL)isTitleReturnCallbackScheme:(NSString*)scheme
+{
+    static NSString* const kCallbackScheme = @"callback-title-return";
+    
+    return [scheme isEqualToString:kCallbackScheme];
+}
+
 - (void)processStyles:(NSString *)styles
 {
     NSArray *styleStrings = [styles componentsSeparatedByString:kDefaultCallbackParameterSeparator];
@@ -1281,6 +1291,17 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 	
     [self callDelegateEditorTextDidChange];
 }
+
+- (void)setTitleCss:(NSString *)css{
+    NSString *trigger = [NSString stringWithFormat:@"ZSSEditor.setTitleCss(\"%@\");", css];
+    [self.webView stringByEvaluatingJavaScriptFromString:trigger];
+}
+
+- (void)setBodyCss:(NSString *)css{
+    NSString *trigger = [NSString stringWithFormat:@"ZSSEditor.setBodyCss(\"%@\");", css];
+    [self.webView stringByEvaluatingJavaScriptFromString:trigger];
+}
+
 
 #pragma mark - Images
 

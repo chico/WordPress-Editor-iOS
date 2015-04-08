@@ -136,6 +136,7 @@ ZSSEditor.formatNewLine = function(e) {
             document.execCommand('formatBlock', false, 'p');
         }
     } else {
+        this.callback("callback-title-return");
         e.preventDefault();
     }
 };
@@ -2009,6 +2010,14 @@ ZSSField.prototype.refreshPlaceholderColorAboutToGainFocus = function(willGainFo
     this.refreshPlaceholderColorForAttributes(this.hasPlaceholderText(),
                                               willGainFocus,
                                               this.isEmpty());
+};
+
+ZSSEditor.setTitleCss = function(css) {
+     $("#zss_field_title").attr('style', css);
+};
+
+ZSSEditor.setBodyCss = function(css) {
+    $("#zss_field_content").attr('style', css);
 };
 
 ZSSField.prototype.refreshPlaceholderColorForAttributes = function(hasPlaceholderText, isFocused, isEmpty) {

@@ -326,6 +326,10 @@ stylesForCurrentSelection:(NSArray*)styles;
  */
 - (void)enableEditing;
 
+- (void)setTitleCss:(NSString *)css;
+
+- (void)setBodyCss:(NSString *)css;
+
 #pragma mark - Styles
 
 - (void)alignLeft;
