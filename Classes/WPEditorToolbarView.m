@@ -30,7 +30,7 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
 @property (nonatomic, weak) UIView *rightToolbarHolder;
 @property (nonatomic, weak) UIView *rightToolbarDivider;
 @property (nonatomic, weak) UIScrollView *toolbarScroll;
-
+@property (nonatomic, weak) UIButton *trashbtn;
 #pragma mark - Properties: Toolbar items
 @property (nonatomic, strong, readwrite) UIBarButtonItem* htmlBarButtonItem;
 
@@ -70,10 +70,14 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
     [self buildToolbarScroll];
     [self buildLeftToolbar];
     
+}
+
+-(void)buildRightToolbar:(UIFont *)font iconString:(NSString *)iconString{
     if (!IS_IPAD) {
-        [self.contentView addSubview:[self rightToolbarHolder]];
+        [self.contentView addSubview:[self rightToolbarHolder:font iconString:iconString]];
     }
 }
+
 
 - (void)reloadItems
 {
@@ -235,6 +239,7 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
                                    target:(id)target
                                  selector:(SEL)selector
                        accessibilityLabel:(NSString*)accessibilityLabel
+                                    font:(UIFont *)font
 {
     ZSSBarButtonItem *barButtonItem = [[ZSSBarButtonItem alloc] initWithImage:nil
                                                                         style:UIBarButtonItemStylePlain
@@ -244,15 +249,18 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
     barButtonItem.htmlProperty = htmlProperty;
     barButtonItem.accessibilityLabel = accessibilityLabel;
     
-    UIImage* buttonImage = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+   // UIImage* buttonImage = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     WPEditorToolbarButton* customButton = [[WPEditorToolbarButton alloc] initWithFrame:CGRectMake(0,
                                                                                                   0,
                                                                                                   WPEditorToolbarButtonWidth,
                                                                                                   WPEditorToolbarButtonHeight)];
-    [customButton setImage:buttonImage forState:UIControlStateNormal];
-    customButton.normalTintColor = [UIColor colorWithRed:230.0/255.0 green:218.0/255.0 blue:217.0/255.0 alpha:1.0]; //self.itemTintColor;
-    customButton.selectedTintColor = [UIColor colorWithRed:230.0/255.0 green:218.0/255.0 blue:217.0/255.0 alpha:1.0];
+    
+    [customButton.titleLabel setFont:font];
+    [customButton setTitle:imageName forState:UIControlStateNormal];
+    //[customButton setImage:buttonImage forState:UIControlStateNormal];
+    customButton.normalTintColor = [UIColor whiteColor]; //colorWithRed:230.0/255.0 green:218.0/255.0 blue:217.0/255.0 alpha:1.0]; //self.itemTintColor;
+    customButton.selectedTintColor = [UIColor whiteColor]; //colorWithRed:230.0/255.0 green:218.0/255.0 blue:217.0/255.0 alpha:1.0];
     [customButton addTarget:target
                      action:selector
            forControlEvents:UIControlEventTouchUpInside];
@@ -381,7 +389,7 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
     return _htmlBarButtonItem;
 }
 
-- (UIView*)rightToolbarHolder
+- (UIView*)rightToolbarHolder:(UIFont *)font iconString:(NSString *)iconString
 {
     UIView* rightToolbarHolder = _rightToolbarHolder;
     
@@ -395,23 +403,23 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
         rightToolbarHolder.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         rightToolbarHolder.clipsToBounds = YES;
         
-        UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-        btn.frame = rightToolbarHolder.bounds;
-        FAKFontAwesome *ic = [FAKFontAwesome trashIconWithSize:20];
-        
-        [ic addAttribute:NSForegroundColorAttributeName value:[UIColor
-                                                               colorWithRed:229.0/255.0 green:218.0/255.0 blue:217.0/255.0 alpha:1.0]];
-        [btn.titleLabel setAttributedText:ic.attributedString];
-        
-        [btn addTarget:self action:@selector(btnMorePressed:) forControlEvents:UIControlEventTouchUpInside];
+        _trashbtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _trashbtn.frame = rightToolbarHolder.bounds;
+        _trashbtn.titleLabel.font = font;
+        [_trashbtn setTitle:iconString forState:UIControlStateNormal];
+        [_trashbtn addTarget:self action:@selector(btnMorePressed:) forControlEvents:UIControlEventTouchUpInside];
     
-        [btn setAttributedTitle:ic.attributedString forState:UIControlStateNormal];
-        [rightToolbarHolder addSubview:btn];
+        [rightToolbarHolder addSubview:_trashbtn];
         
         _rightToolbarHolder = rightToolbarHolder;
     }
     
     return rightToolbarHolder;
+}
+
+
+-(void)changeTrashColor:(UIColor *)color{
+    [_trashbtn setTitleColor:color forState:UIControlStateNormal];
 }
 
 - (void)btnMorePressed:(UIButton *)sender{

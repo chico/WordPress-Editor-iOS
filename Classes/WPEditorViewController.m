@@ -116,7 +116,21 @@ NSInteger const WPLinkAlertViewTag = 92;
     _toolbarView.selectedItemTintColor = [WPStyleGuide baseDarkerBlue];
     
     _toolbarView.items = [self itemsForToolbar];
+    
+    [_toolbarView buildRightToolbar:self.fontAwesome iconString:[self.arrIcons objectAtIndex:6]];
+    
+    [self buildTextViews];
 }
+
+- (void)iconColor:(UIColor *)defaultColor selectedColor:(UIColor *)selectedColor{
+    for (ZSSBarButtonItem *btn in _toolbarView.items) {
+        WPEditorToolbarButton *wpb = (WPEditorToolbarButton *)btn.customView;
+        wpb.normalTintColor = defaultColor;
+        wpb.selectedTintColor = selectedColor;
+    }
+    [_toolbarView changeTrashColor:defaultColor];
+}
+
 
 #pragma mark - UIViewController
 
@@ -138,9 +152,7 @@ NSInteger const WPLinkAlertViewTag = 92;
     [WPFontManager openSansBoldFontOfSize:16];
     [WPFontManager openSansBoldItalicFontOfSize:16];
     
-    [self createToolbarView];
-    [self buildTextViews];
-    
+    //[self createToolbarView];
     self.toolbar = [[UIToolbar alloc] init];
     [self.toolbar setBarStyle:UIBarStyleBlackTranslucent];
     [self.toolbar sizeToFit];
@@ -206,12 +218,12 @@ NSInteger const WPLinkAlertViewTag = 92;
     NSMutableArray *items = [[NSMutableArray alloc] init];
     
     if ([self.toolbarView hasSomeEnabledToolbarItems]) {
-        [items addObject:[self boldBarButton]];
-        [items addObject:[self italicBarButton]];
-        [items addObject:[self unorderedListBarButton]];
-        [items addObject:[self orderedListBarButton]];
-        [items addObject:[self inserLinkBarButton]];
-        [items addObject:[self insertImageBarButton]];
+        [items addObject:[self boldBarButton:[self.arrIcons objectAtIndex:0]]];
+        [items addObject:[self italicBarButton:[self.arrIcons objectAtIndex:1]]];
+        [items addObject:[self unorderedListBarButton:[self.arrIcons objectAtIndex:2]]];
+        [items addObject:[self orderedListBarButton:[self.arrIcons objectAtIndex:3]]];
+        [items addObject:[self inserLinkBarButton:[self.arrIcons objectAtIndex:4]]];
+        [items addObject:[self insertImageBarButton:[self.arrIcons objectAtIndex:5]]];
 //        
 //        if ([self canShowInsertImageBarButton]) {
 //            [items addObject:[self insertImageBarButton]];
@@ -535,13 +547,15 @@ NSInteger const WPLinkAlertViewTag = 92;
                                    target:(id)target
                                  selector:(SEL)selector
                        accessibilityLabel:(NSString*)accessibilityLabel
+                                     font:(UIFont *)font
 {
     return [self.toolbarView barButtonItemWithTag:tag
                                      htmlProperty:htmlProperty
                                         imageName:imageName
                                            target:target
                                          selector:selector
-                               accessibilityLabel:accessibilityLabel];
+                               accessibilityLabel:accessibilityLabel
+            font:self.fontAwesome];
 }
 
 - (ZSSBarButtonItem*)alignLeftBarButton
@@ -551,7 +565,8 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSleftjustify.png"
                                                           target:self
                                                         selector:@selector(alignLeft)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
     
     return barButtonItem;
 }
@@ -563,7 +578,8 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSScenterjustify.png"
                                                           target:self
                                                         selector:@selector(alignCenter)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
     
     return barButtonItem;
 }
@@ -575,7 +591,8 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSforcejustify.png"
                                                           target:self
                                                         selector:@selector(alignFull)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
     
     return barButtonItem;
 }
@@ -587,7 +604,8 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSrightjustify.png"
                                                           target:self
                                                         selector:@selector(alignRight)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
     
     return barButtonItem;
 }
@@ -599,7 +617,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSbgcolor.png"
                                                           target:self
                                                         selector:@selector(bgColor)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -614,22 +634,25 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"icon_format_quote"
                                                           target:self
                                                         selector:@selector(setBlockQuote)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
     
     return barButtonItem;
 }
 
-- (UIBarButtonItem*)boldBarButton
+- (UIBarButtonItem*)boldBarButton:(NSString *)icon
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Bold",
                                                      @"Accessibility label for bold button on formatting toolbar.");
     
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementTagBoldBarButton
                                                     htmlProperty:@"bold"
-                                                       imageName:@"icon_format_bold"
+                                                       imageName:icon
                                                           target:self
                                                         selector:@selector(setBold)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -641,7 +664,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSh1.png"
                                                           target:self
                                                         selector:@selector(heading1)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -653,7 +678,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSh2.png"
                                                           target:self
                                                         selector:@selector(heading2)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -665,7 +692,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSh3.png"
                                                           target:self
                                                         selector:@selector(heading3)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -677,8 +706,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSh4.png"
                                                           target:self
                                                         selector:@selector(heading4)
-                                              accessibilityLabel:nil];
-    
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     return barButtonItem;
 }
 
@@ -689,7 +719,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSh5.png"
                                                           target:self
                                                         selector:@selector(heading5)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -701,7 +733,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSh6.png"
                                                           target:self
                                                         selector:@selector(heading6)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -713,7 +747,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSShorizontalrule.png"
                                                           target:self
                                                         selector:@selector(setHR)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -725,67 +761,77 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSindent.png"
                                                           target:self
                                                         selector:@selector(setIndent)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
 
-- (UIBarButtonItem*)insertImageBarButton
+- (UIBarButtonItem*)insertImageBarButton:(NSString *)icon
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Insert Image",
                                                      @"Accessibility label for insert image button on formatting toolbar.");
     
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementTagInsertImageBarButton
                                                     htmlProperty:@"image"
-                                                       imageName:@"icon_format_media"
+                                                       imageName:icon
                                                           target:self
                                                         selector:@selector(didTouchMediaOptions)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
 
-- (UIBarButtonItem*)inserLinkBarButton
+- (UIBarButtonItem*)inserLinkBarButton:(NSString *)icon
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Insert Link",
                                                      @"Accessibility label for insert link button on formatting toolbar.");
     
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementTagInsertLinkBarButton
                                                     htmlProperty:@"link"
-                                                       imageName:@"icon_format_link"
+                                                       imageName:icon
                                                           target:self
                                                         selector:@selector(linkBarButtonTapped:)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
 
-- (UIBarButtonItem*)italicBarButton
+- (UIBarButtonItem*)italicBarButton:(NSString *)icon
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Italic",
                                                      @"Accessibility label for italic button on formatting toolbar.");
     
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementTagItalicBarButton
                                                     htmlProperty:@"italic"
-                                                       imageName:@"icon_format_italic"
+                                                       imageName:icon
                                                           target:self
                                                         selector:@selector(setItalic)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
 
-- (UIBarButtonItem*)orderedListBarButton
+- (UIBarButtonItem*)orderedListBarButton:(NSString *)icon
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Ordered List",
                                                      @"Accessibility label for ordered list button on formatting toolbar.");;
     
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementOrderedListBarButton
                                                     htmlProperty:@"orderedList"
-                                                       imageName:@"icon_format_ol"
+                                                       imageName:icon
                                                           target:self
                                                         selector:@selector(setOrderedList)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -797,7 +843,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSoutdent.png"
                                                           target:self
                                                         selector:@selector(setOutdent)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -809,7 +857,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSquicklink.png"
                                                           target:self
                                                         selector:@selector(quickLink)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -821,7 +871,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSredo.png"
                                                           target:self
                                                         selector:@selector(redo:)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -833,7 +885,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSclearstyle.png"
                                                           target:self
                                                         selector:@selector(removeFormat)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -848,7 +902,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"icon_format_unlink"
                                                           target:self
                                                         selector:@selector(removeLink)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -863,7 +919,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"icon_format_html"
                                                           target:self
                                                         selector:@selector(showHTMLSource:)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -878,7 +936,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"icon_format_strikethrough"
                                                           target:self
                                                         selector:@selector(setStrikethrough)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -890,7 +950,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSsubscript.png"
                                                           target:self
                                                         selector:@selector(setSubscript)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -902,7 +964,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSsuperscript.png"
                                                           target:self
                                                         selector:@selector(setSuperscript)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -914,7 +978,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSStextcolor.png"
                                                           target:self
                                                         selector:@selector(textColor)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -929,22 +995,26 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"icon_format_underline"
                                                           target:self
                                                         selector:@selector(setUnderline)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
 
-- (UIBarButtonItem*)unorderedListBarButton
+- (UIBarButtonItem*)unorderedListBarButton:(NSString *)icon
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Unordered List",
                                                      @"Accessibility label for unordered list button on formatting toolbar.");
     
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementUnorderedListBarButton
                                                     htmlProperty:@"unorderedList"
-                                                       imageName:@"icon_format_ul"
+                                                       imageName:icon
                                                           target:self
                                                         selector:@selector(setUnorderedList)
-                                              accessibilityLabel:accessibilityLabel];
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -956,7 +1026,9 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                        imageName:@"ZSSundo.png"
                                                           target:self
                                                         selector:@selector(undo:)
-                                              accessibilityLabel:nil];
+                                              accessibilityLabel:nil
+                                                            font:self.fontAwesome];
+
     
     return barButtonItem;
 }
@@ -975,12 +1047,12 @@ NSInteger const WPLinkAlertViewTag = 92;
         self.editorView.delegate = self;
         self.editorView.autoresizesSubviews = YES;
         self.editorView.autoresizingMask = mask;
-        self.editorView.backgroundColor = [UIColor colorWithRed:180.0/255.0 green:139.0/255.0 blue:138.0/255.0 alpha:1.0];
-        self.editorView.sourceView.backgroundColor = [UIColor colorWithRed:180.0/255.0 green:139.0/255.0 blue:138.0/255.0 alpha:1.0];
+        self.editorView.backgroundColor = [UIColor clearColor]; //colorWithRed:180.0/255.0 green:139.0/255.0 blue:138.0/255.0 alpha:1.0];
+        self.editorView.sourceView.backgroundColor = [UIColor clearColor]; //colorWithRed:180.0/255.0 green:139.0/255.0 blue:138.0/255.0 alpha:1.0];
         //self.editorView.sourceView.inputAccessoryView = self.toolbarView;
         // self.editorView.sourceViewTitleField.inputAccessoryView = self.toolbarView;
         [self.view addSubview:self.toolbarView];
-        self.toolbarView.backgroundColor = [UIColor colorWithRed:161.0/255.0 green:110.0/255.0 blue:109.0/255.0 alpha:1.0];
+        self.toolbarView.backgroundColor = [UIColor whiteColor]; //colorWithRed:161.0/255.0 green:110.0/255.0 blue:109.0/255.0 alpha:1.0];
         
         self.editorView.titleField.tag = 0;
         

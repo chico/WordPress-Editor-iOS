@@ -2013,11 +2013,13 @@ ZSSField.prototype.refreshPlaceholderColorAboutToGainFocus = function(willGainFo
 };
 
 ZSSEditor.setTitleCss = function(css) {
-     $("#zss_field_title").attr('style', css);
+    $("#zss_field_title").attr('style', css);
+   // setTimeout(function() { $("#zss_field_title").attr('style', css); }, 100);
 };
 
 ZSSEditor.setBodyCss = function(css) {
     $("#zss_field_content").attr('style', css);
+   // setTimeout(function() { $("#zss_field_content").attr('style', css); }, 100);
 };
 
 ZSSField.prototype.refreshPlaceholderColorForAttributes = function(hasPlaceholderText, isFocused, isEmpty) {
@@ -2030,8 +2032,6 @@ ZSSField.prototype.refreshPlaceholderColorForAttributes = function(hasPlaceholde
         } else {
             this.wrappedObject.css('color', this.bodyPlaceholderColor);
         }
-    } else {
-        this.wrappedObject.css('color', '');
     }
     
 };

@@ -93,7 +93,13 @@ WPEditorViewControllerMode;
 
 @property (nonatomic, strong) UIToolbar *toolbar;
 
+@property (nonatomic, strong) NSMutableArray *arrIcons;
+
+@property (nonatomic, strong) UIFont *fontAwesome;
+
 #pragma mark - Initializers
+
+- (void)createToolbarView;
 
 /**
  *	@brief		Initializes the VC with the specified mode.
@@ -115,6 +121,7 @@ WPEditorViewControllerMode;
  */
 - (BOOL)isEditing;
 
+- (void)iconColor:(UIColor *)defaultColor selectedColor:(UIColor *)selectedColor;
 /**
  *	@brief		Starts editing.
  */

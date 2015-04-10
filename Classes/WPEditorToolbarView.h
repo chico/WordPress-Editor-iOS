@@ -150,7 +150,8 @@ typedef enum
                                 imageName:(NSString*)imageName
                                    target:(id)target
                                  selector:(SEL)selector
-                       accessibilityLabel:(NSString*)accessibilityLabel;
+                       accessibilityLabel:(NSString*)accessibilityLabel
+                                     font:(UIFont*)font;
 
 #pragma mark - Toolbar items
 
@@ -177,5 +178,9 @@ typedef enum
 - (void)clearSelectedToolbarItems;
 
 - (void)selectToolbarItemsForStyles:(NSArray*)styles;
+
+-(void)changeTrashColor:(UIColor *)color;
+
+-(void)buildRightToolbar:(UIFont *)font iconString:(NSString *)iconString;
 
 @end
