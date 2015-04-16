@@ -2,7 +2,6 @@
 #import "WPDeviceIdentification.h"
 #import "WPEditorToolbarButton.h"
 #import "ZSSBarButtonItem.h"
-#import "FontAwesomeKit.h"
 
 static int kDefaultToolbarItemPadding = 20;
 static int kDefaultToolbarLeftPadding = 20;
@@ -435,10 +434,10 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
                                                                               target:nil
                                                                               action:nil];
        
-        FAKFontAwesome *ic = [FAKFontAwesome ellipsisVIconWithSize:20];
+   //     FAKFontAwesome *ic = [FAKFontAwesome ellipsisVIconWithSize:20];
         
-        [ic addAttribute:NSForegroundColorAttributeName value:[UIColor
-                                                                     whiteColor]];
+   //     [ic addAttribute:NSForegroundColorAttributeName value:[UIColor
+   //                                                                  whiteColor]];
 //        NSDictionary * attributes = @{NSFontAttributeName: ic};
 //        [htmlBarButtonItem setTitleTextAttributes:attributes forState:UIControlStateNormal];
 //        htmlBarButtonItem.accessibilityLabel = NSLocalizedString(@"Display HTML",
@@ -454,7 +453,7 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
         customButton.normalTintColor = [UIColor whiteColor];//self.itemTintColor;
         customButton.selectedTintColor = [UIColor whiteColor];//self.selectedItemTintColor;
         customButton.reversesTitleShadowWhenHighlighted = YES;
-        customButton.titleLabel.attributedText = [ic attributedString];
+  //      customButton.titleLabel.attributedText = [ic attributedString];
         [customButton addTarget:self
                          action:@selector(showHTMLSource:)
                forControlEvents:UIControlEventTouchUpInside];
