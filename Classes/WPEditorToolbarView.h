@@ -181,6 +181,6 @@ typedef enum
 
 -(void)changeTrashColor:(UIColor *)color;
 
--(void)buildRightToolbar:(UIFont *)font iconString:(NSString *)iconString;
+-(void)buildRightToolbar:(UIFont *)font icon:(UIImage *)icon;
 
 @end

@@ -117,7 +117,7 @@ NSInteger const WPLinkAlertViewTag = 92;
     
     _toolbarView.items = [self itemsForToolbar];
     
-    [_toolbarView buildRightToolbar:self.fontAwesome iconString:[self.arrIcons objectAtIndex:6]];
+    [_toolbarView buildRightToolbar:self.fontAwesome icon:[self.arrIcons objectAtIndex:6]];
     
     [self buildTextViews];
 }

@@ -71,9 +71,10 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
     
 }
 
--(void)buildRightToolbar:(UIFont *)font iconString:(NSString *)iconString{
-    if (!IS_IPAD) {
-        [self.contentView addSubview:[self rightToolbarHolder:font iconString:iconString]];
+-(void)buildRightToolbar:(UIFont *)font icon:(UIImage *)icon
+{
+if (!IS_IPAD) {
+        [self.contentView addSubview:[self rightToolbarHolder:font icon:icon]];
     }
 }
 
@@ -388,16 +389,17 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
     return _htmlBarButtonItem;
 }
 
-- (UIView*)rightToolbarHolder:(UIFont *)font iconString:(NSString *)iconString
+
+- (UIView*)rightToolbarHolder:(UIFont *)font icon:(UIImage *)icon
 {
     UIView* rightToolbarHolder = _rightToolbarHolder;
     
     if (!rightToolbarHolder) {
         
-        CGRect rightToolbarHolderFrame = CGRectMake(CGRectGetWidth(self.frame) - WPEditorToolbarButtonWidth,
-                                                    0.0f,
-                                                    WPEditorToolbarButtonWidth,
-                                                    WPEditorToolbarHeight);
+        CGRect rightToolbarHolderFrame = CGRectMake(CGRectGetWidth(self.frame) - 30,
+                                                    8.0f,
+                                                    17,
+                                                    20);
         rightToolbarHolder = [[UIView alloc] initWithFrame:rightToolbarHolderFrame];
         rightToolbarHolder.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         rightToolbarHolder.clipsToBounds = YES;
@@ -405,7 +407,8 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
         _trashbtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _trashbtn.frame = rightToolbarHolder.bounds;
         _trashbtn.titleLabel.font = font;
-        [_trashbtn setTitle:iconString forState:UIControlStateNormal];
+        [_trashbtn setImage:icon forState:UIControlStateNormal];
+        //[_trashbtn setTitle:iconString forState:UIControlStateNormal];
         [_trashbtn addTarget:self action:@selector(btnMorePressed:) forControlEvents:UIControlEventTouchUpInside];
     
         [rightToolbarHolder addSubview:_trashbtn];
