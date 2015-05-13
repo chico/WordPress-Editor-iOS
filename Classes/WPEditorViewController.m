@@ -117,7 +117,7 @@ NSInteger const WPLinkAlertViewTag = 92;
     
     _toolbarView.items = [self itemsForToolbar];
     
-    [_toolbarView buildRightToolbar:self.fontAwesome icon:[self.arrIcons objectAtIndex:6]];
+    [_toolbarView buildRightToolbar:self.fontAwesome imageString:[self.arrIcons objectAtIndex:5]];
     
     [self buildTextViews];
 }
@@ -223,7 +223,7 @@ NSInteger const WPLinkAlertViewTag = 92;
         [items addObject:[self unorderedListBarButton:[self.arrIcons objectAtIndex:2]]];
         [items addObject:[self orderedListBarButton:[self.arrIcons objectAtIndex:3]]];
         [items addObject:[self inserLinkBarButton:[self.arrIcons objectAtIndex:4]]];
-        [items addObject:[self insertImageBarButton:[self.arrIcons objectAtIndex:5]]];
+//        [items addObject:[self insertImageBarButton:[self.arrIcons objectAtIndex:5]]];
 //        
 //        if ([self canShowInsertImageBarButton]) {
 //            [items addObject:[self insertImageBarButton]];
@@ -1041,7 +1041,7 @@ NSInteger const WPLinkAlertViewTag = 92;
         CGFloat viewWidth = CGRectGetWidth(self.view.frame);
         UIViewAutoresizing mask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         
-        CGRect frame = CGRectMake(0.0f, self.toolbarView.frame.size.height, viewWidth, CGRectGetHeight(self.view.frame) - self.toolbarView.frame.size.height);
+        CGRect frame = CGRectMake(0.0f, 0.0f, viewWidth, CGRectGetHeight(self.view.frame) - self.toolbarView.frame.size.height);
         
         self.editorView = [[WPEditorView alloc] initWithFrame:frame];
         self.editorView.delegate = self;
@@ -1060,7 +1060,7 @@ NSInteger const WPLinkAlertViewTag = 92;
         
         // Default placeholder text
         self.titlePlaceholderText = NSLocalizedString(@"Title",  @"Placeholder for the post title.");
-        self.bodyPlaceholderText = NSLocalizedString(@"Add your note", @"Placeholder for the post body.");
+        self.bodyPlaceholderText = NSLocalizedString(@"Type your note", @"Placeholder for the post body.");
     }
     
     [self.view addSubview:self.editorView];
@@ -1695,8 +1695,9 @@ NSInteger const WPLinkAlertViewTag = 92;
         [field setPlaceholderText:self.bodyPlaceholderText];
         [field setPlaceholderColor:[UIColor colorWithHexString:@"F3E0DC"]];//[WPStyleGuide allTAllShadeGrey]];
         
-        self.keyboardControls.fields = @[self.editorView.titleField, self.editorView.contentField];
-        self.keyboardControls.activeField = [self.keyboardControls.fields objectAtIndex:0];
+        self.keyboardControls.fields = [[NSMutableArray alloc]initWithObjects:self.editorView.contentField, nil];
+        //self.keyboardControls.fields = @[self.editorView.contentField, self.editorView.contentField];
+        //self.keyboardControls.activeField = [self.keyboardControls.fields objectAtIndex:0];
     }
     
     if ([self.delegate respondsToSelector:@selector(editorViewController:fieldCreated:)]) {
@@ -1707,6 +1708,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)editorView:(WPEditorView*)editorView
       fieldFocused:(WPEditorField*)field
 {
+    [self.delegate editorFocused];
     [self.keyboardControls setActiveField:field];
     if (field == self.editorView.titleField) {
         [self.toolbarView enableToolbarItems:NO shouldShowSourceButton:YES];

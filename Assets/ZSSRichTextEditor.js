@@ -65,29 +65,29 @@ ZSSEditor.init = function() {
     document.execCommand('defaultParagraphSeparator', false, this.defaultParagraphSeparator);
     
     var editor = $('div.field').each(function() {
-        var editableField = new ZSSField($(this));
-        var editableFieldId = editableField.getNodeId();
-                                             
-        ZSSEditor.editableFields[editableFieldId] = editableField;
-        ZSSEditor.callback("callback-new-field", "id=" + editableFieldId);
-    });
+                                     var editableField = new ZSSField($(this));
+                                     var editableFieldId = editableField.getNodeId();
+                                     
+                                     ZSSEditor.editableFields[editableFieldId] = editableField;
+                                     ZSSEditor.callback("callback-new-field", "id=" + editableFieldId);
+                                     });
     
-	document.addEventListener("selectionchange", function(e) {
-		ZSSEditor.currentEditingLink = null;
-		// DRM: only do something here if the editor has focus.  The reason is that when the
-		// selection changes due to the editor loosing focus, the focusout event will not be
-		// sent if we try to load a callback here.
-		//
-		if (editor.is(":focus")) {
-            ZSSEditor.selectionChangedCallback();
-            ZSSEditor.sendEnabledStyles(e);
-			var clicked = $(e.target);
-			if (!clicked.hasClass('zs_active')) {
-				$('img').removeClass('zs_active');
-			}
-		}
-	}, false);
-
+    document.addEventListener("selectionchange", function(e) {
+                              ZSSEditor.currentEditingLink = null;
+                              // DRM: only do something here if the editor has focus.  The reason is that when the
+                              // selection changes due to the editor loosing focus, the focusout event will not be
+                              // sent if we try to load a callback here.
+                              //
+                              if (editor.is(":focus")) {
+                              ZSSEditor.selectionChangedCallback();
+                              ZSSEditor.sendEnabledStyles(e);
+                              var clicked = $(e.target);
+                              if (!clicked.hasClass('zs_active')) {
+                              $('img').removeClass('zs_active');
+                              }
+                              }
+                              }, false);
+    
 }; //end
 
 // MARK: - Debugging logs
@@ -149,7 +149,7 @@ ZSSEditor.formatNewLineInsideBlockquote = function(e) {
 ZSSEditor.getField = function(fieldId) {
     
     var field = this.editableFields[fieldId];
-
+    
     return field;
 };
 
@@ -170,14 +170,14 @@ ZSSEditor.getFocusedField = function() {
 // MARK: - Logging
 
 ZSSEditor.log = function(msg) {
-	ZSSEditor.callback('callback-log', 'msg=' + msg);
+    ZSSEditor.callback('callback-log', 'msg=' + msg);
 };
 
 // MARK: - Callbacks
 
 ZSSEditor.domLoadedCallback = function() {
-	
-	ZSSEditor.callback("callback-dom-loaded");
+    
+    ZSSEditor.callback("callback-dom-loaded");
 };
 
 ZSSEditor.selectionChangedCallback = function () {
@@ -190,17 +190,17 @@ ZSSEditor.selectionChangedCallback = function () {
 
 ZSSEditor.callback = function(callbackScheme, callbackPath) {
     
-	var url =  callbackScheme + ":";
- 
-	if (callbackPath) {
-		url = url + callbackPath;
-	}
-	
-	if (isUsingiOS) {
+    var url =  callbackScheme + ":";
+    
+    if (callbackPath) {
+        url = url + callbackPath;
+    }
+    
+    if (isUsingiOS) {
         ZSSEditor.callbackThroughIFrame(url);
-	} else {
-		console.log(url);
-	}
+    } else {
+        console.log(url);
+    }
 };
 
 /**
@@ -229,20 +229,20 @@ ZSSEditor.callbackThroughIFrame = function(url) {
 };
 
 ZSSEditor.stylesCallback = function(stylesArray) {
-
-	var stylesString = '';
-	
-	if (stylesArray.length > 0) {
-		stylesString = stylesArray.join(defaultCallbackSeparator);
-	}
-
-	ZSSEditor.callback("callback-selection-style", stylesString);
+    
+    var stylesString = '';
+    
+    if (stylesArray.length > 0) {
+        stylesString = stylesArray.join(defaultCallbackSeparator);
+    }
+    
+    ZSSEditor.callback("callback-selection-style", stylesString);
 };
 
 // MARK: - Selection
 
 ZSSEditor.backupRange = function(){
-	var selection = window.getSelection();
+    var selection = window.getSelection();
     var range = selection.getRangeAt(0);
     
     ZSSEditor.currentSelection =
@@ -267,9 +267,9 @@ ZSSEditor.restoreRange = function(){
 };
 
 ZSSEditor.getSelectedText = function() {
-	var selection = window.getSelection();
-	
-	return selection.toString();
+    var selection = window.getSelection();
+    
+    return selection.toString();
 };
 
 ZSSEditor.getCaretArguments = function() {
@@ -386,85 +386,85 @@ ZSSEditor.defaultParagraphSeparatorTag = function() {
 // MARK: - Styles
 
 ZSSEditor.setBold = function() {
-	document.execCommand('bold', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('bold', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setItalic = function() {
-	document.execCommand('italic', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('italic', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setSubscript = function() {
-	document.execCommand('subscript', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('subscript', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setSuperscript = function() {
-	document.execCommand('superscript', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('superscript', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setStrikeThrough = function() {
-	var commandName = 'strikeThrough';
-	var isDisablingStrikeThrough = ZSSEditor.isCommandEnabled(commandName);
-	
-	document.execCommand(commandName, false, null);
-	
-	// DRM: WebKit has a problem disabling strikeThrough when the tag <del> is used instead of
-	// <strike>.  The code below serves as a way to fix this issue.
-	//
-	var mustHandleWebKitIssue = (isDisablingStrikeThrough
-								 && ZSSEditor.isCommandEnabled(commandName));
-	
-	if (mustHandleWebKitIssue) {
-		var troublesomeNodeNames = ['del'];
-		
-		var selection = window.getSelection();
-		var range = selection.getRangeAt(0).cloneRange();
-		
-		var container = range.commonAncestorContainer;
-		var nodeFound = false;
-		var textNode = null;
-		
-		while (container && !nodeFound) {
-			nodeFound = (container
-						 && container.nodeType == document.ELEMENT_NODE
-						 && troublesomeNodeNames.indexOf(container.nodeName.toLowerCase()) > -1);
-			
-			if (!nodeFound) {
-				container = container.parentElement;
-			}
-		}
-		
-		if (container) {
-			var newObject = $(container).replaceWith(container.innerHTML);
-			
-			var finalSelection = window.getSelection();
-			var finalRange = selection.getRangeAt(0).cloneRange();
-			
-			finalRange.setEnd(finalRange.startContainer, finalRange.startOffset + 1);
-			
-			selection.removeAllRanges();
-			selection.addRange(finalRange);
-		}
-	}
-	
-	ZSSEditor.sendEnabledStyles();
+    var commandName = 'strikeThrough';
+    var isDisablingStrikeThrough = ZSSEditor.isCommandEnabled(commandName);
+    
+    document.execCommand(commandName, false, null);
+    
+    // DRM: WebKit has a problem disabling strikeThrough when the tag <del> is used instead of
+    // <strike>.  The code below serves as a way to fix this issue.
+    //
+    var mustHandleWebKitIssue = (isDisablingStrikeThrough
+                                 && ZSSEditor.isCommandEnabled(commandName));
+    
+    if (mustHandleWebKitIssue) {
+        var troublesomeNodeNames = ['del'];
+        
+        var selection = window.getSelection();
+        var range = selection.getRangeAt(0).cloneRange();
+        
+        var container = range.commonAncestorContainer;
+        var nodeFound = false;
+        var textNode = null;
+        
+        while (container && !nodeFound) {
+            nodeFound = (container
+                         && container.nodeType == document.ELEMENT_NODE
+                         && troublesomeNodeNames.indexOf(container.nodeName.toLowerCase()) > -1);
+            
+            if (!nodeFound) {
+                container = container.parentElement;
+            }
+        }
+        
+        if (container) {
+            var newObject = $(container).replaceWith(container.innerHTML);
+            
+            var finalSelection = window.getSelection();
+            var finalRange = selection.getRangeAt(0).cloneRange();
+            
+            finalRange.setEnd(finalRange.startContainer, finalRange.startOffset + 1);
+            
+            selection.removeAllRanges();
+            selection.addRange(finalRange);
+        }
+    }
+    
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setUnderline = function() {
-	document.execCommand('underline', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('underline', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setBlockquote = function() {
-	var formatTag = "blockquote";
-	var formatBlock = document.queryCommandValue('formatBlock');
-	 
-	if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
+    var formatTag = "blockquote";
+    var formatBlock = document.queryCommandValue('formatBlock');
+    
+    if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
         document.execCommand('formatBlock', false, this.defaultParagraphSeparatorTag());
-	} else {
+    } else {
         var blockquoteNode = this.closerParentNodeWithName(formatTag);
         
         if (blockquoteNode) {
@@ -472,55 +472,55 @@ ZSSEditor.setBlockquote = function() {
         } else {
             document.execCommand('formatBlock', false, '<' + formatTag + '>');
         }
-	}
-
-	 ZSSEditor.sendEnabledStyles();
+    }
+    
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.removeFormating = function() {
-	document.execCommand('removeFormat', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('removeFormat', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setHorizontalRule = function() {
-	document.execCommand('insertHorizontalRule', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('insertHorizontalRule', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setHeading = function(heading) {
-	var formatTag = heading;
-	var formatBlock = document.queryCommandValue('formatBlock');
-	
-	if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
-		document.execCommand('formatBlock', false, this.defaultParagraphSeparatorTag());
-	} else {
-		document.execCommand('formatBlock', false, '<' + formatTag + '>');
-	}
-	
-	ZSSEditor.sendEnabledStyles();
+    var formatTag = heading;
+    var formatBlock = document.queryCommandValue('formatBlock');
+    
+    if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
+        document.execCommand('formatBlock', false, this.defaultParagraphSeparatorTag());
+    } else {
+        document.execCommand('formatBlock', false, '<' + formatTag + '>');
+    }
+    
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setParagraph = function() {
-	var formatTag = "p";
-	var formatBlock = document.queryCommandValue('formatBlock');
-	
-	if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
-		document.execCommand('formatBlock', false, this.defaultParagraphSeparatorTag());
-	} else {
-		document.execCommand('formatBlock', false, '<' + formatTag + '>');
-	}
-	
-	ZSSEditor.sendEnabledStyles();
+    var formatTag = "p";
+    var formatBlock = document.queryCommandValue('formatBlock');
+    
+    if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
+        document.execCommand('formatBlock', false, this.defaultParagraphSeparatorTag());
+    } else {
+        document.execCommand('formatBlock', false, '<' + formatTag + '>');
+    }
+    
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.undo = function() {
-	document.execCommand('undo', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('undo', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.redo = function() {
-	document.execCommand('redo', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('redo', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setOrderedList = function() {
@@ -529,104 +529,104 @@ ZSSEditor.setOrderedList = function() {
 };
 
 ZSSEditor.setUnorderedList = function() {
-	document.execCommand('insertUnorderedList', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('insertUnorderedList', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setJustifyCenter = function() {
-	document.execCommand('justifyCenter', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('justifyCenter', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setJustifyFull = function() {
-	document.execCommand('justifyFull', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('justifyFull', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setJustifyLeft = function() {
-	document.execCommand('justifyLeft', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('justifyLeft', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setJustifyRight = function() {
-	document.execCommand('justifyRight', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('justifyRight', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setIndent = function() {
-	document.execCommand('indent', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('indent', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setOutdent = function() {
-	document.execCommand('outdent', false, null);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand('outdent', false, null);
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setTextColor = function(color) {
     ZSSEditor.restoreRange();
-	document.execCommand("styleWithCSS", null, true);
-	document.execCommand('foreColor', false, color);
-	document.execCommand("styleWithCSS", null, false);
-	ZSSEditor.sendEnabledStyles();
+    document.execCommand("styleWithCSS", null, true);
+    document.execCommand('foreColor', false, color);
+    document.execCommand("styleWithCSS", null, false);
+    ZSSEditor.sendEnabledStyles();
     // document.execCommand("removeFormat", false, "foreColor"); // Removes just foreColor
 };
 
 ZSSEditor.setBackgroundColor = function(color) {
-	ZSSEditor.restoreRange();
-	document.execCommand("styleWithCSS", null, true);
-	document.execCommand('hiliteColor', false, color);
-	document.execCommand("styleWithCSS", null, false);
-	ZSSEditor.sendEnabledStyles();
+    ZSSEditor.restoreRange();
+    document.execCommand("styleWithCSS", null, true);
+    document.execCommand('hiliteColor', false, color);
+    document.execCommand("styleWithCSS", null, false);
+    ZSSEditor.sendEnabledStyles();
 };
 
 // Needs addClass method
 
 ZSSEditor.insertLink = function(url, title) {
-
+    
     ZSSEditor.restoreRange();
-	
+    
     var sel = document.getSelection();
-	if (sel.rangeCount) {
-
-		var el = document.createElement("a");
-		el.setAttribute("href", url);
-		
-		var range = sel.getRangeAt(0).cloneRange();
-		range.surroundContents(el);
-		el.innerHTML = title;
-		sel.removeAllRanges();
-		sel.addRange(range);
-	}
-
-	ZSSEditor.sendEnabledStyles();
+    if (sel.rangeCount) {
+        
+        var el = document.createElement("a");
+        el.setAttribute("href", url);
+        
+        var range = sel.getRangeAt(0).cloneRange();
+        range.surroundContents(el);
+        el.innerHTML = title;
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
+    
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.updateLink = function(url, title) {
-	
+    
     ZSSEditor.restoreRange();
-	
+    
     var currentLinkNode = ZSSEditor.lastTappedNode;
-	
+    
     if (currentLinkNode) {
-		currentLinkNode.setAttribute("href", url);
-		currentLinkNode.innerHTML = title;
+        currentLinkNode.setAttribute("href", url);
+        currentLinkNode.innerHTML = title;
     }
     ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.unlink = function() {
-	var savedSelection = rangy.saveSelection();
+    var savedSelection = rangy.saveSelection();
     
-	var currentLinkNode = ZSSEditor.closerParentNodeWithName('a');
+    var currentLinkNode = ZSSEditor.closerParentNodeWithName('a');
     
-	if (currentLinkNode) {
-		ZSSEditor.unwrapNode(currentLinkNode);
-	}
+    if (currentLinkNode) {
+        ZSSEditor.unwrapNode(currentLinkNode);
+    }
     
     rangy.restoreSelection(savedSelection);
-	
-	ZSSEditor.sendEnabledStyles();
+    
+    ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.unwrapNode = function(node) {
@@ -634,49 +634,49 @@ ZSSEditor.unwrapNode = function(node) {
 };
 
 ZSSEditor.quickLink = function() {
-	
-	var sel = document.getSelection();
-	var link_url = "";
-	var test = new String(sel);
-	var mailregexp = new RegExp("^(.+)(\@)(.+)$", "gi");
-	if (test.search(mailregexp) == -1) {
-		checkhttplink = new RegExp("^http\:\/\/", "gi");
-		if (test.search(checkhttplink) == -1) {
-			checkanchorlink = new RegExp("^\#", "gi");
-			if (test.search(checkanchorlink) == -1) {
-				link_url = "http://" + sel;
-			} else {
-				link_url = sel;
-			}
-		} else {
-			link_url = sel;
-		}
-	} else {
-		checkmaillink = new RegExp("^mailto\:", "gi");
-		if (test.search(checkmaillink) == -1) {
-			link_url = "mailto:" + sel;
-		} else {
-			link_url = sel;
-		}
-	}
-
-	var html_code = '<a href="' + link_url + '">' + sel + '</a>';
-	ZSSEditor.insertHTML(html_code);
+    
+    var sel = document.getSelection();
+    var link_url = "";
+    var test = new String(sel);
+    var mailregexp = new RegExp("^(.+)(\@)(.+)$", "gi");
+    if (test.search(mailregexp) == -1) {
+        checkhttplink = new RegExp("^http\:\/\/", "gi");
+        if (test.search(checkhttplink) == -1) {
+            checkanchorlink = new RegExp("^\#", "gi");
+            if (test.search(checkanchorlink) == -1) {
+                link_url = "http://" + sel;
+            } else {
+                link_url = sel;
+            }
+        } else {
+            link_url = sel;
+        }
+    } else {
+        checkmaillink = new RegExp("^mailto\:", "gi");
+        if (test.search(checkmaillink) == -1) {
+            link_url = "mailto:" + sel;
+        } else {
+            link_url = sel;
+        }
+    }
+    
+    var html_code = '<a href="' + link_url + '">' + sel + '</a>';
+    ZSSEditor.insertHTML(html_code);
 };
 
 // MARK: - Images
 
 ZSSEditor.updateImage = function(url, alt) {
-
+    
     ZSSEditor.restoreRange();
-
+    
     if (ZSSEditor.currentEditingImage) {
         var c = ZSSEditor.currentEditingImage;
         c.attr('src', url);
         c.attr('alt', alt);
     }
     ZSSEditor.sendEnabledStyles();
-
+    
 };
 
 ZSSEditor.insertImage = function(url, alt) {
@@ -796,7 +796,7 @@ ZSSEditor.setProgressOnImage = function(imageNodeIdentifier, progress) {
     
     var imageProgressNode = this.getImageProgressNodeWithIdentifier(imageNodeIdentifier);
     if (imageProgressNode.length == 0){
-          return;
+        return;
     }
     imageProgressNode.attr("value",progress);
 };
@@ -855,7 +855,7 @@ ZSSEditor.markImageUploadFailed = function(imageNodeIdentifier, message) {
     if (imageNode.length == 0){
         return;
     }
-
+    
     var sizeClass = '';
     if ( imageNode[0].width > 480 && imageNode[0].height > 240 ) {
         sizeClass = "largeFail";
@@ -912,7 +912,7 @@ ZSSEditor.removeImage = function(imageNodeIdentifier) {
     if (imageNode.length != 0){
         imageNode.remove();
     }
-
+    
     // if image is inside options container we need to remove the container
     var imageContainerNode = this.getImageContainerNodeWithIdentifier(imageNodeIdentifier);
     if (imageContainerNode.length != 0){
@@ -930,10 +930,10 @@ ZSSEditor.updateCurrentImageMeta = function( imageMetaString ) {
     if ( !ZSSEditor.currentEditingImage ) {
         return;
     }
-
+    
     var imageMeta = JSON.parse( imageMetaString );
     var html = ZSSEditor.createImageFromMeta( imageMeta );
-
+    
     // Insert the updated html and remove the outdated node.
     // This approach is preferred to selecting the current node via a range,
     // and then replacing it when calling insertHTML. The insertHTML call can,
@@ -942,18 +942,18 @@ ZSSEditor.updateCurrentImageMeta = function( imageMetaString ) {
     var node = ZSSEditor.findImageCaptionNode( ZSSEditor.currentEditingImage );
     node.insertAdjacentHTML( 'afterend', html );
     node.remove();
-
+    
     ZSSEditor.currentEditingImage = null;
 }
 
 ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
     var node = ZSSEditor.findImageCaptionNode( imageNode );
-
+    
     var sizeClass = "";
     if ( imageNode.width < 100 || imageNode.height < 100 ) {
         sizeClass = " small";
     }
-
+    
     var overlay = '<span class="edit-overlay"><span class="edit-content">Edit</span></span>';
     var html = '<span class="edit-container' + sizeClass + '">' + overlay + '</span>';
    	node.insertAdjacentHTML( 'beforebegin', html );
@@ -966,7 +966,7 @@ ZSSEditor.removeImageSelectionFormatting = function( imageNode ) {
     if ( !node.parentNode || node.parentNode.className.indexOf( "edit-container" ) == -1 ) {
         return;
     }
-
+    
     var parentNode = node.parentNode;
     var container = parentNode.parentNode;
     container.insertBefore( node, parentNode );
@@ -976,16 +976,16 @@ ZSSEditor.removeImageSelectionFormatting = function( imageNode ) {
 ZSSEditor.removeImageSelectionFormattingFromHTML = function( html ) {
     var tmp = document.createElement( "div" );
     var tmpDom = $( tmp ).html( html );
-
+    
     var matches = tmpDom.find( "span.edit-container img" );
     if ( matches.length == 0 ) {
         return html;
     }
-
+    
     for ( var i = 0; i < matches.length; i++ ) {
         ZSSEditor.removeImageSelectionFormatting( matches[i] );
     }
-
+    
     return tmpDom.html();
 }
 
@@ -999,15 +999,15 @@ ZSSEditor.findImageCaptionNode = function( imageNode ) {
     if ( node.parentNode && node.parentNode.nodeName === 'A' ) {
         node = node.parentNode;
     }
-
+    
     if ( node.parentNode && node.parentNode.className.indexOf( 'wp-caption' ) != -1 ) {
         node = node.parentNode;
     }
-
+    
     if ( node.parentNode && (node.parentNode.className.indexOf( 'wp-temp' ) != -1 ) ) {
         node = node.parentNode;
     }
-
+    
     return node;
 }
 
@@ -1024,93 +1024,93 @@ ZSSEditor.findImageCaptionNode = function( imageNode ) {
 ZSSEditor.createImageFromMeta = function( props ) {
     var img = {},
     options, classes, shortcode, html;
-
+    
     classes = props.classes || [];
     if ( ! ( classes instanceof Array ) ) {
         classes = classes.split( ' ' );
     }
-
+    
     _.extend( img, _.pick( props, 'width', 'height', 'alt', 'src', 'title' ) );
-
+    
     // Only assign the align class to the image if we're not printing
     // a caption, since the alignment is sent to the shortcode.
     if ( props.align && ! props.caption ) {
         classes.push( 'align' + props.align );
     }
-
+    
     if ( props.size ) {
         classes.push( 'size-' + props.size );
     }
-
+    
     if ( props.attachment_id ) {
         classes.push( 'wp-image-' + props.attachment_id );
     }
-
+    
     img['class'] = _.compact( classes ).join(' ');
-
+    
     // Generate `img` tag options.
     options = {
-        tag:    'img',
-        attrs:  img,
-        single: true
+    tag:    'img',
+    attrs:  img,
+    single: true
     };
-
+    
     // Generate the `a` element options, if they exist.
     if ( props.linkUrl ) {
         options = {
-            tag:   'a',
-            attrs: {
-                href: props.linkUrl
-            },
-            content: options
+        tag:   'a',
+        attrs: {
+        href: props.linkUrl
+        },
+        content: options
         };
-
+        
         if ( props.linkClassName ) {
             options.attrs.class = props.linkClassName;
         }
-
+        
         if ( props.linkRel ) {
             options.attrs.rel = props.linkRel;
         }
-
+        
         if ( props.linkTargetBlank ) { // expects a boolean
             options.attrs.target = "_blank";
         }
     }
-
+    
     html = wp.html.string( options );
-
+    
     // Generate the caption shortcode.
     if ( props.caption ) {
         shortcode = {};
-
+        
         if ( img.width ) {
             shortcode.width = img.width;
         }
-
+        
         if ( props.captionId ) {
             shortcode.id = props.captionId;
         }
-
+        
         if ( props.align ) {
             shortcode.align = 'align' + props.align;
         } else {
             shortcode.align = 'alignnone';
         }
-
+        
         if (props.captionClassName) {
             shortcode.class = props.captionClassName;
         }
-
+        
         html = wp.shortcode.string({
-            tag:     'caption',
-            attrs:   shortcode,
-            content: html + ' ' + props.caption
-        });
-
+                                   tag:     'caption',
+                                   attrs:   shortcode,
+                                   content: html + ' ' + props.caption
+                                   });
+        
         html = ZSSEditor.applyVisualFormatting( html );
     }
-
+    
     return html;
 };
 
@@ -1128,71 +1128,71 @@ ZSSEditor.extractImageMeta = function( imageNode ) {
     var classes, extraClasses, metadata, captionBlock, caption, link, width, height,
     captionClassName = [],
     isIntRegExp = /^\d+$/;
-
+    
     // Default attributes. All values are strings, except linkTargetBlank
     metadata = {
-        align: 'none',      // Accepted values: center, left, right or empty string.
-        alt: '',            // Image alt attribute
-        attachment_id: '',  // Numeric attachment id of the image in the site's media library
-        caption: '',        // The text of the caption for the image (if any)
-        captionClassName: '', // The classes for the caption shortcode (if any).
-        captionId: '',      // The caption shortcode's ID attribute. The numeric value should match the value of attachment_id
-        classes: '',        // The class attribute for the image. Does not include editor generated classes
-        height: '',         // The image height attribute
-        linkClassName: '',  // The class attribute for the link
-        linkRel: '',        // The rel attribute for the link (if any)
-        linkTargetBlank: false, // true if the link should open in a new window.
-        linkUrl: '',        // The href attribute of the link
-        size: 'custom',     // Accepted values: custom, medium, large, thumbnail, or empty string
-        src: '',            // The src attribute of the image
-        title: '',          // The title attribute of the image (if any)
-        width: '',          // The image width attribute
-        naturalWidth:'',    // The natural width of the image.
-        naturalHeight:''    // The natural height of the image.
+    align: 'none',      // Accepted values: center, left, right or empty string.
+    alt: '',            // Image alt attribute
+    attachment_id: '',  // Numeric attachment id of the image in the site's media library
+    caption: '',        // The text of the caption for the image (if any)
+    captionClassName: '', // The classes for the caption shortcode (if any).
+    captionId: '',      // The caption shortcode's ID attribute. The numeric value should match the value of attachment_id
+    classes: '',        // The class attribute for the image. Does not include editor generated classes
+    height: '',         // The image height attribute
+    linkClassName: '',  // The class attribute for the link
+    linkRel: '',        // The rel attribute for the link (if any)
+    linkTargetBlank: false, // true if the link should open in a new window.
+    linkUrl: '',        // The href attribute of the link
+    size: 'custom',     // Accepted values: custom, medium, large, thumbnail, or empty string
+    src: '',            // The src attribute of the image
+    title: '',          // The title attribute of the image (if any)
+    width: '',          // The image width attribute
+    naturalWidth:'',    // The natural width of the image.
+    naturalHeight:''    // The natural height of the image.
     };
-
+    
     // populate metadata with values of matched attributes
     metadata.src = $( imageNode ).attr( 'src' ) || '';
     metadata.alt = $( imageNode ).attr( 'alt' ) || '';
     metadata.title = $( imageNode ).attr( 'title' ) || '';
     metadata.naturalWidth = imageNode.naturalWidth;
     metadata.naturalHeight = imageNode.naturalHeight;
-
+    
     width = $(imageNode).attr( 'width' );
     height = $(imageNode).attr( 'height' );
-
+    
     if ( ! isIntRegExp.test( width ) || parseInt( width, 10 ) < 1 ) {
         width = imageNode.naturalWidth || imageNode.width;
     }
-
+    
     if ( ! isIntRegExp.test( height ) || parseInt( height, 10 ) < 1 ) {
         height = imageNode.naturalHeight || imageNode.height;
     }
-
+    
     metadata.width = width;
     metadata.height = height;
-
+    
     classes = imageNode.className.split( /\s+/ );
     extraClasses = [];
-
+    
     $.each( classes, function( index, value ) {
-        if ( /^wp-image/.test( value ) ) {
+           if ( /^wp-image/.test( value ) ) {
            metadata.attachment_id = parseInt( value.replace( 'wp-image-', '' ), 10 );
-        } else if ( /^align/.test( value ) ) {
+           } else if ( /^align/.test( value ) ) {
            metadata.align = value.replace( 'align', '' );
-        } else if ( /^size/.test( value ) ) {
+           } else if ( /^size/.test( value ) ) {
            metadata.size = value.replace( 'size-', '' );
-        } else {
+           } else {
            extraClasses.push( value );
-        }
-    } );
-
+           }
+           } );
+    
     metadata.classes = extraClasses.join( ' ' );
-
+    
     // Extract caption
     var captionMeta = ZSSEditor.captionMetaForImage( imageNode )
     metadata = $.extend( metadata, captionMeta );
-
+    
     // Extract linkTo
     if ( imageNode.parentNode && imageNode.parentNode.nodeName === 'A' ) {
         link = imageNode.parentNode;
@@ -1201,7 +1201,7 @@ ZSSEditor.extractImageMeta = function( imageNode ) {
         metadata.linkTargetBlank = $( link ).attr( 'target' ) === '_blank' ? true : false;
         metadata.linkUrl = $( link ).attr( 'href' ) || '';
     }
-
+    
     return metadata;
 };
 
@@ -1215,15 +1215,15 @@ ZSSEditor.extractImageMeta = function( imageNode ) {
  */
 ZSSEditor.getCaptionForImage = function( imageNode ) {
     var node = ZSSEditor.findImageCaptionNode( imageNode );
-
+    
     // Ensure we're working with the formatted caption
     if ( node.className.indexOf( 'wp-temp' ) == -1 ) {
         return;
     }
-
+    
     var html = node.outerHTML;
     html = ZSSEditor.removeVisualFormatting( html );
-
+    
     return wp.shortcode.next( "caption", html, 0 );
 };
 
@@ -1237,18 +1237,18 @@ ZSSEditor.getCaptionForImage = function( imageNode ) {
  */
 ZSSEditor.captionMetaForImage = function( imageNode ) {
     var attrs,
-        meta = {
-            align: '',
-            caption: '',
-            captionClassName: '',
-            captionId: ''
-        };
-
+    meta = {
+    align: '',
+    caption: '',
+    captionClassName: '',
+    captionId: ''
+    };
+    
     var caption = ZSSEditor.getCaptionForImage( imageNode );
     if ( !caption ) {
         return meta;
     }
-
+    
     attrs = caption.shortcode.attrs.named;
     if ( attrs.align ) {
         meta.align = attrs.align.replace( 'align', '' );
@@ -1260,7 +1260,7 @@ ZSSEditor.captionMetaForImage = function( imageNode ) {
         meta.captionId = attrs.id;
     }
     meta.caption = caption.shortcode.content.substr( caption.shortcode.content.lastIndexOf( ">" ) + 1 );
-
+    
     return meta;
 }
 
@@ -1278,19 +1278,19 @@ ZSSEditor.applyCaptionFormatting = function( match ) {
     // of the content body when `-webkit-user-select: none` is set and the caption is tapped.
     var out = '<label class="wp-temp" data-wp-temp="caption" contenteditable="false" onclick="">';
     out += '<span class="wp-caption"';
-
+    
     if ( attrs.width ) {
         out += ' style="width:' + attrs.width + 'px; max-width:100% !important;"';
     }
     $.each( attrs, function( key, value ) {
-        out += " data-caption-" + key + '="' + value + '"';
-    } );
-
+           out += " data-caption-" + key + '="' + value + '"';
+           } );
+    
     out += '>';
     out += match.content;
     out += '</span>';
     out += '</label>';
-
+    
     return out;
 }
 
@@ -1304,69 +1304,69 @@ ZSSEditor.applyCaptionFormatting = function( match ) {
 ZSSEditor.removeCaptionFormatting = function( html ) {
     // call methods to restore any transformed content from its visual presentation to its source code.
     var regex = /<label class="wp-temp" data-wp-temp="caption"[^>]*>([\s\S]+?)<\/label>/g;
-
+    
     var str = html.replace( regex, ZSSEditor.removeCaptionFormattingCallback );
-
+    
     return str;
 }
 
 ZSSEditor.removeCaptionFormattingCallback = function( match, content ) {
     // TODO: check is a visual temp node
     var out = '';
-
+    
     if ( content.indexOf('<img ') === -1 ) {
         // Broken caption. The user managed to drag the image out?
         // Try to return the caption text as a paragraph.
         out = content.match( /\s*<span [^>]*>([\s\S]+?)<\/span>/gi );
-
+        
         if ( out && out[1] ) {
             return '<p>' + out[1] + '</p>';
         }
-
+        
         return '';
     }
-
+    
     out = content.replace( /\s*<span ([^>]*)>([\s\S]+?)<\/span>/gi, function( ignoreMatch, attrStr, content ) {
-        if ( ! content ) {
-            return '';
-        }
-
-        var id, classes, align, width, attrs = {};
-
-        width = attrStr.match( /data-caption-width="([0-9]*)"/ );
-        width = ( width && width[1] ) ? width[1] : '';
-        if ( width ) {
-            attrs.width = width;
-        }
-
-        id = attrStr.match( /data-caption-id="([^"]*)"/ );
-        id = ( id && id[1] ) ? id[1] : '';
-        if ( id ) {
-            attrs.id = id;
-        }
-
-        classes = attrStr.match( /data-caption-class="([^"]*)"/ );
-        classes = ( classes && classes[1] ) ? classes[1] : '';
-        if ( classes ) {
-            attrs.class = classes;
-        }
-
-        align = attrStr.match( /data-caption-align="([^"]*)"/ );
-        align = ( align && align[1] ) ? align[1] : '';
-        if ( align ) {
-            attrs.align = align;
-        }
-
-        var options = {
-            'tag':'caption',
-            'attrs':attrs,
-            'type':'closed',
-            'content':content
-        };
-
-        return wp.shortcode.string( options );
-    });
-
+                          if ( ! content ) {
+                          return '';
+                          }
+                          
+                          var id, classes, align, width, attrs = {};
+                          
+                          width = attrStr.match( /data-caption-width="([0-9]*)"/ );
+                          width = ( width && width[1] ) ? width[1] : '';
+                          if ( width ) {
+                          attrs.width = width;
+                          }
+                          
+                          id = attrStr.match( /data-caption-id="([^"]*)"/ );
+                          id = ( id && id[1] ) ? id[1] : '';
+                          if ( id ) {
+                          attrs.id = id;
+                          }
+                          
+                          classes = attrStr.match( /data-caption-class="([^"]*)"/ );
+                          classes = ( classes && classes[1] ) ? classes[1] : '';
+                          if ( classes ) {
+                          attrs.class = classes;
+                          }
+                          
+                          align = attrStr.match( /data-caption-align="([^"]*)"/ );
+                          align = ( align && align[1] ) ? align[1] : '';
+                          if ( align ) {
+                          attrs.align = align;
+                          }
+                          
+                          var options = {
+                          'tag':'caption',
+                          'attrs':attrs,
+                          'type':'closed',
+                          'content':content
+                          };
+                          
+                          return wp.shortcode.string( options );
+                          });
+    
     return out;
 }
 
@@ -1381,7 +1381,7 @@ ZSSEditor.removeCaptionFormattingCallback = function( match, content ) {
  */
 ZSSEditor.applyVisualFormatting  = function( html ) {
     var str = wp.shortcode.replace( 'caption', html, ZSSEditor.applyCaptionFormatting );
-
+    
     return str;
 }
 
@@ -1400,18 +1400,18 @@ ZSSEditor.removeVisualFormatting = function( html ) {
 }
 
 ZSSEditor.insertHTML = function(html) {
-	document.execCommand('insertHTML', false, html);
-	this.sendEnabledStyles();
+    document.execCommand('insertHTML', false, html);
+    this.sendEnabledStyles();
 };
 
 ZSSEditor.isCommandEnabled = function(commandName) {
-	return document.queryCommandState(commandName);
+    return document.queryCommandState(commandName);
 };
 
 ZSSEditor.sendEnabledStyles = function(e) {
-
-	var items = [];
-	
+    
+    var items = [];
+    
     var focusedField = this.getFocusedField();
     
     if (!focusedField.hasNoStyle) {
@@ -1532,8 +1532,8 @@ ZSSEditor.sendEnabledStyles = function(e) {
             }
         }
     }
-	
-	ZSSEditor.stylesCallback(items);
+    
+    ZSSEditor.stylesCallback(items);
 };
 
 // MARK: - Commands: High Level Editing
@@ -1669,7 +1669,7 @@ function ZSSField(wrappedObject) {
     if (this.wrappedDomNode().hasAttribute('nostyle')) {
         this.hasNoStyle = true;
     }
-
+    
     this.useVisualFormatting = (this.wrappedObject.data("wpUseVisualFormatting") === "true")
     
     this.bindListeners();
@@ -1696,7 +1696,7 @@ ZSSField.prototype.bindListeners = function() {
  *  @details    If the node contains child image nodes, then the content is left untouched.
  */
 ZSSField.prototype.emptyFieldIfNoContents = function() {
-
+    
     var nbsp = '\xa0';
     var text = this.wrappedObject.text().replace(nbsp, '');
     
@@ -1721,7 +1721,7 @@ ZSSField.prototype.emptyFieldIfNoContentsAndRefreshPlaceholderColor = function()
 
 ZSSField.prototype.handleBlurEvent = function(e) {
     ZSSEditor.focusedField = null;
-
+    
     this.emptyFieldIfNoContentsAndRefreshPlaceholderColor();
     
     this.callback("callback-focus-out");
@@ -1738,7 +1738,7 @@ ZSSField.prototype.handleFocusEvent = function(e) {
 };
 
 ZSSField.prototype.handleKeyDownEvent = function(e) {
-
+    
     var wasEnterPressed = (e.keyCode == '13');
     
     if (this.isComposing) {
@@ -1756,7 +1756,7 @@ ZSSField.prototype.handleInputEvent = function(e) {
     
     // Skip this if we are composing on an IME keyboard
     if (this.isComposing ) { return; }
-
+    
     // IMPORTANT: we want the placeholder to come up if there's no text, so we clear the field if
     // there's no real content in it.  It's important to do this here and not on keyDown or keyUp
     // as the field could become empty because of a cut or paste operation as well as a key press.
@@ -1796,45 +1796,45 @@ ZSSField.prototype.handleTapEvent = function(e) {
             //
             setTimeout(function() { thisObj.callback('callback-link-tap', joinedArguments);}, 500);
         }
-
+        
         if (targetNode.nodeName.toLowerCase() == 'img') {
             // If the image is uploading, or is a local image do not select it.
             if ( targetNode.dataset.wpid ) {
                 this.sendImageTappedCallback( targetNode );
                 return;
             }
-
+            
             // If we're not currently editing just return. No need to apply styles
             // or acknowledge the tap
             if ( this.wrappedObject.attr('contenteditable') != "true" ) {
                 return;
             }
-
+            
             // Is the tapped image the image we're editing?
             if ( targetNode == ZSSEditor.currentEditingImage ) {
                 ZSSEditor.removeImageSelectionFormatting( targetNode );
                 this.sendImageTappedCallback( targetNode );
                 return;
             }
-
+            
             // If there is a selected image, deselect it. A different image was tapped.
             if ( ZSSEditor.currentEditingImage ) {
                 ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
             }
-
+            
             // Format and flag the image as selected.
             ZSSEditor.currentEditingImage = targetNode;
             ZSSEditor.applyImageSelectionFormatting( targetNode );
-
+            
             return;
         }
-
+        
         if (targetNode.className.indexOf('edit-overlay') != -1 || targetNode.className.indexOf('edit-content') != -1) {
             ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
             this.sendImageTappedCallback( ZSSEditor.currentEditingImage );
             return;
         }
-
+        
         if ( ZSSEditor.currentEditingImage ) {
             ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
             ZSSEditor.currentEditingImage = null;
@@ -1851,11 +1851,11 @@ ZSSField.prototype.sendImageTappedCallback = function( imageNode ) {
     var arguments = ['id=' + encodeURIComponent( imageId ),
                      'url=' + encodeURIComponent( imageNode.src ),
                      'meta=' + encodeURIComponent( meta )];
-
+    
     var joinedArguments = arguments.join( defaultCallbackSeparator );
-
+    
     var thisObj = this;
-
+    
     // WORKAROUND: force the event to become sort of "after-tap" through setTimeout()
     //
     setTimeout(function() { thisObj.callback('callback-image-tap', joinedArguments);}, 500);
@@ -1864,11 +1864,11 @@ ZSSField.prototype.sendImageTappedCallback = function( imageNode ) {
 // MARK: - Callback Execution
 
 ZSSField.prototype.callback = function(callbackScheme, callbackPath) {
-
+    
     var url = callbackScheme + ":";
-
+    
     url = url + "id=" + this.getNodeId();
-
+    
     if (callbackPath) {
         url = url + defaultCallbackSeparator + callbackPath;
     }
@@ -1883,7 +1883,7 @@ ZSSField.prototype.callback = function(callbackScheme, callbackPath) {
 // MARK: - Focus
 
 ZSSField.prototype.isFocused = function() {
-
+    
     return this.wrappedObject.is(':focus');
 };
 
@@ -2001,9 +2001,9 @@ ZSSField.prototype.setPlaceholderColor = function(color) {
 };
 
 ZSSField.prototype.refreshPlaceholderColor = function() {
-     this.refreshPlaceholderColorForAttributes(this.hasPlaceholderText(),
-                                               this.isFocused(),
-                                               this.isEmpty());
+    this.refreshPlaceholderColorForAttributes(this.hasPlaceholderText(),
+                                              this.isFocused(),
+                                              this.isEmpty());
 };
 
 ZSSField.prototype.refreshPlaceholderColorAboutToGainFocus = function(willGainFocus) {
@@ -2014,12 +2014,12 @@ ZSSField.prototype.refreshPlaceholderColorAboutToGainFocus = function(willGainFo
 
 ZSSEditor.setTitleCss = function(css) {
     $("#zss_field_title").attr('style', css);
-   // setTimeout(function() { $("#zss_field_title").attr('style', css); }, 100);
+    // setTimeout(function() { $("#zss_field_title").attr('style', css); }, 100);
 };
 
 ZSSEditor.setBodyCss = function(css) {
     $("#zss_field_content").attr('style', css);
-   // setTimeout(function() { $("#zss_field_content").attr('style', css); }, 100);
+    // setTimeout(function() { $("#zss_field_content").attr('style', css); }, 100);
 };
 
 ZSSField.prototype.refreshPlaceholderColorForAttributes = function(hasPlaceholderText, isFocused, isEmpty) {

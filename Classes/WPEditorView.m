@@ -808,9 +808,12 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
          }
      } onComplete:^{
          
+         if ([fieldId isEqualToString:kWPEditorViewFieldContentId]) {
+
          WPEditorField* newField = [self createFieldWithId:fieldId];
          
          [self callDelegateFieldCreated:newField];
+         }
      }];
 }
 

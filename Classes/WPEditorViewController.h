@@ -26,6 +26,7 @@ WPEditorViewControllerMode;
 - (void)editorTextDidChange:(WPEditorViewController *)editorController;
 - (void)editorDidPressMedia:(WPEditorViewController *)editorController;
 - (void)editorDidPressTrash:(WPEditorViewController *)editorController;
+- (void)editorFocused;
 
 /**
  *	@brief		Received when the field is created and can be used.

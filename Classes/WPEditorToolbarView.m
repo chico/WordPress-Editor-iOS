@@ -71,10 +71,10 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
     
 }
 
--(void)buildRightToolbar:(UIFont *)font icon:(UIImage *)icon
+-(void)buildRightToolbar:(UIFont *)font imageString:(NSString*)imageString
 {
 if (!IS_IPAD) {
-        [self.contentView addSubview:[self rightToolbarHolder:font icon:icon]];
+        [self.contentView addSubview:[self rightToolbarHolder:font imageString:imageString]];
     }
 }
 
@@ -283,7 +283,6 @@ if (!IS_IPAD) {
                                                     | ZSSRichTextEditorToolbarItalic
                                                     | ZSSRichTextEditorToolbarUnorderedList
                                                     | ZSSRichTextEditorToolbarOrderedList
-                                                    | ZSSRichTextEditorToolbarInsertImage
                                                     | ZSSRichTextEditorToolbarInsertLink
                                                     
                                                     );
@@ -390,16 +389,16 @@ if (!IS_IPAD) {
 }
 
 
-- (UIView*)rightToolbarHolder:(UIFont *)font icon:(UIImage *)icon
+- (UIView*)rightToolbarHolder:(UIFont *)font imageString:(NSString*)imageString
 {
     UIView* rightToolbarHolder = _rightToolbarHolder;
     
     if (!rightToolbarHolder) {
         
-        CGRect rightToolbarHolderFrame = CGRectMake(CGRectGetWidth(self.frame) - 30,
-                                                    8.0f,
-                                                    17,
-                                                    20);
+        CGRect rightToolbarHolderFrame = CGRectMake(CGRectGetWidth(self.frame) - 45,
+                                                    0.0f,
+                                                    WPEditorToolbarButtonWidth,
+                                                    WPEditorToolbarButtonHeight);
         rightToolbarHolder = [[UIView alloc] initWithFrame:rightToolbarHolderFrame];
         rightToolbarHolder.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         rightToolbarHolder.clipsToBounds = YES;
@@ -407,8 +406,8 @@ if (!IS_IPAD) {
         _trashbtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _trashbtn.frame = rightToolbarHolder.bounds;
         _trashbtn.titleLabel.font = font;
-        [_trashbtn setImage:icon forState:UIControlStateNormal];
-        //[_trashbtn setTitle:iconString forState:UIControlStateNormal];
+        //[_trashbtn setImage:icon forState:UIControlStateNormal];
+        [_trashbtn setTitle:imageString forState:UIControlStateNormal];
         [_trashbtn addTarget:self action:@selector(btnMorePressed:) forControlEvents:UIControlEventTouchUpInside];
     
         [rightToolbarHolder addSubview:_trashbtn];
