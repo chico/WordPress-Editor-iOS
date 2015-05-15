@@ -52,12 +52,12 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
-    
+
     if (self) {
         _enabledToolbarItems = [self defaultToolbarItems];
         [self buildToolbar];
     }
-    
+
     return self;
 }
 
@@ -68,13 +68,13 @@ static const CGFloat WPEditorToolbarButtonWidth = 40;
     [self buildMainToolbarHolder];
     [self buildToolbarScroll];
     [self buildLeftToolbar];
-    
+
 }
 
 -(void)buildRightToolbar:(UIFont *)font imageString:(NSString*)imageString
 {
 if (!IS_IPAD) {
-        [self.contentView addSubview:[self rightToolbarHolder:font imageString:imageString]];
+        [self.contentView addSubview:[self rightToolbarHolder:font imageString:imageString parentViewWidth:self.contentView.frame.size.width]];
     }
 }
 
@@ -92,7 +92,7 @@ if (!IS_IPAD) {
 {
     NSMutableArray *items = [self.items mutableCopy];
     CGFloat toolbarItemsSeparation = 0.0f;
-    
+
     if ([WPDeviceIdentification isiPhoneSixPlus]) {
         toolbarItemsSeparation = kNegativeSixPlusToolbarItemPadding;
     } else if ([WPDeviceIdentification isiPhoneSix]) {
@@ -100,31 +100,31 @@ if (!IS_IPAD) {
     } else {
         toolbarItemsSeparation = kNegativeToolbarItemPadding;
     }
-    
+
     CGFloat toolbarWidth = 0.0f;
     NSUInteger numberOfItems = items.count;
     if (numberOfItems > 0) {
         CGFloat finalPaddingBetweenItems = kDefaultToolbarItemPadding - toolbarItemsSeparation;
-        
+
         toolbarWidth += (numberOfItems * WPEditorToolbarButtonWidth);
         toolbarWidth += (numberOfItems * finalPaddingBetweenItems);
     }
-    
+
     UIBarButtonItem *negativeSeparator = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
                                                                                        target:nil
                                                                                        action:nil];
     negativeSeparator.width = -toolbarItemsSeparation;
-    
+
     // This code adds a negative separator between all the toolbar buttons
     for (NSInteger i = [items count]; i >= 0; i--) {
         [items insertObject:negativeSeparator atIndex:i];
     }
-    
+
     UIBarButtonItem *negativeSeparatorForToolbar = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
                                                                                                  target:nil
                                                                                                  action:nil];
     CGFloat finalToolbarLeftPadding = kDefaultToolbarLeftPadding - kNegativeLeftToolbarLeftPadding;
-    
+
     negativeSeparatorForToolbar.width = -kNegativeLeftToolbarLeftPadding;
     toolbarWidth += finalToolbarLeftPadding;
     self.leftToolbar.items = items;
@@ -161,38 +161,38 @@ if (!IS_IPAD) {
 - (void)buildLeftToolbar
 {
     NSAssert(_leftToolbar == nil, @"This is supposed to be called only once.");
-    
+
     UIToolbar* leftToolbar = [[UIToolbar alloc] initWithFrame:CGRectZero];
     leftToolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     leftToolbar.barTintColor = self.backgroundColor;
     leftToolbar.translucent = NO;
-    
+
     // We had some issues with the left toolbar not resizing properly - and we didn't realize
     // immediately.  Clipping to bounds is a good way to realize sooner and not later.
     //
     leftToolbar.clipsToBounds = YES;
-    
+
     [self.toolbarScroll addSubview:leftToolbar];
     self.leftToolbar = leftToolbar;
 }
 
 - (void)buildMainToolbarHolder
-{    
+{
     CGRect subviewFrame = self.frame;
     subviewFrame.origin = CGPointZero;
-    
+
     UIView* mainToolbarHolderContent = [[UIView alloc] initWithFrame:subviewFrame];
     mainToolbarHolderContent.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
+
     subviewFrame.size.height = 1.0f;
-    
+
   //  UIView* mainToolbarHolderTopBorder = [[UIView alloc] initWithFrame:subviewFrame];
   //  mainToolbarHolderTopBorder.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     //mainToolbarHolderTopBorder.backgroundColor = self.borderColor;
-    
+
     [self addSubview:mainToolbarHolderContent];
    // [self addSubview:mainToolbarHolderTopBorder];
-    
+
     self.contentView = mainToolbarHolderContent;
     //self.topBorderView = mainToolbarHolderTopBorder;
 }
@@ -200,25 +200,25 @@ if (!IS_IPAD) {
 - (void)buildToolbarScroll
 {
     NSAssert(_toolbarScroll == nil, @"This is supposed to be called only once.");
-    
+
     CGFloat scrollviewHeight = CGRectGetWidth(self.frame);
-    
+
     if (!IS_IPAD) {
         scrollviewHeight -= WPEditorToolbarButtonWidth;
     }
-    
+
     CGRect toolbarScrollFrame = CGRectMake(0,
                                            0,
                                            scrollviewHeight,
                                            WPEditorToolbarHeight);
-    
+
     UIScrollView* toolbarScroll = [[UIScrollView alloc] initWithFrame:toolbarScrollFrame];
     toolbarScroll.showsHorizontalScrollIndicator = NO;
     //if (IS_IPAD) {
         toolbarScroll.scrollEnabled = NO;
     //}
     toolbarScroll.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
+
     [self.contentView addSubview:toolbarScroll];
     self.toolbarScroll = toolbarScroll;
 }
@@ -248,14 +248,14 @@ if (!IS_IPAD) {
     barButtonItem.tag = tag;
     barButtonItem.htmlProperty = htmlProperty;
     barButtonItem.accessibilityLabel = accessibilityLabel;
-    
+
    // UIImage* buttonImage = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    
+
     WPEditorToolbarButton* customButton = [[WPEditorToolbarButton alloc] initWithFrame:CGRectMake(0,
                                                                                                   0,
                                                                                                   WPEditorToolbarButtonWidth,
                                                                                                   WPEditorToolbarButtonHeight)];
-    
+
     [customButton.titleLabel setFont:font];
     [customButton setTitle:imageName forState:UIControlStateNormal];
     //[customButton setImage:buttonImage forState:UIControlStateNormal];
@@ -265,7 +265,7 @@ if (!IS_IPAD) {
                      action:selector
            forControlEvents:UIControlEventTouchUpInside];
     barButtonItem.customView = customButton;
-    
+
     return barButtonItem;
 }
 
@@ -284,16 +284,16 @@ if (!IS_IPAD) {
                                                     | ZSSRichTextEditorToolbarUnorderedList
                                                     | ZSSRichTextEditorToolbarOrderedList
                                                     | ZSSRichTextEditorToolbarInsertLink
-                                                    
+
                                                     );
-    
+
     // iPad gets the HTML source button too
     if (IS_IPAD) {
         defaultToolbarItems = (defaultToolbarItems
                                | ZSSRichTextEditorToolbarStrikeThrough
                                | ZSSRichTextEditorToolbarViewSource);
     }
-    
+
     return defaultToolbarItems;
 }
 
@@ -301,13 +301,13 @@ if (!IS_IPAD) {
     shouldShowSourceButton:(BOOL)showSource
 {
     NSArray *items = self.leftToolbar.items;
-    
+
     for (ZSSBarButtonItem *item in items) {
         if (item.tag == kWPEditorViewControllerElementShowSourceBarButton) {
             item.enabled = showSource;
         } else {
             item.enabled = enable;
-            
+
             if (!enable) {
                 [item setSelected:NO];
             }
@@ -332,14 +332,14 @@ if (!IS_IPAD) {
 - (void)selectToolbarItemsForStyles:(NSArray*)styles
 {
     NSArray *items = self.leftToolbar.items;
-    
+
     for (UIBarButtonItem *item in items) {
         // Since we're using UIBarItem as negative separators, we need to make sure we don't try to
         // use those here.
         //
         if ([item isKindOfClass:[ZSSBarButtonItem class]]) {
             ZSSBarButtonItem* zssItem = (ZSSBarButtonItem*)item;
-            
+
             if ([styles containsObject:zssItem.htmlProperty]) {
                 zssItem.selected = YES;
             } else {
@@ -358,18 +358,18 @@ if (!IS_IPAD) {
                                                                                style:UIBarButtonItemStylePlain
                                                                               target:nil
                                                                               action:nil];
-        
+
         UIFont * font = [UIFont boldSystemFontOfSize:10];
         NSDictionary * attributes = @{NSFontAttributeName: font};
         [htmlBarButtonItem setTitleTextAttributes:attributes forState:UIControlStateNormal];
         htmlBarButtonItem.accessibilityLabel = NSLocalizedString(@"Display HTML",
                                                                  @"Accessibility label for display HTML button on formatting toolbar.");
-        
+
         CGRect customButtonFrame = CGRectMake(0,
                                               0,
                                               WPEditorToolbarButtonWidth,
                                               WPEditorToolbarButtonHeight);
-        
+
         WPEditorToolbarButton* customButton = [[WPEditorToolbarButton alloc] initWithFrame:customButtonFrame];
         [customButton setTitle:@"HTML" forState:UIControlStateNormal];
         customButton.normalTintColor = self.itemTintColor;
@@ -379,42 +379,43 @@ if (!IS_IPAD) {
         [customButton addTarget:self
                          action:@selector(showHTMLSource:)
                forControlEvents:UIControlEventTouchUpInside];
-        
+
         htmlBarButtonItem.customView = customButton;
-        
+
         _htmlBarButtonItem = htmlBarButtonItem;
     }
-    
+
     return _htmlBarButtonItem;
 }
 
 
-- (UIView*)rightToolbarHolder:(UIFont *)font imageString:(NSString*)imageString
+- (UIView*)rightToolbarHolder:(UIFont *)font imageString:(NSString*)imageString parentViewWidth:(CGFloat)parentViewWidth
 {
     UIView* rightToolbarHolder = _rightToolbarHolder;
-    
+
     if (!rightToolbarHolder) {
-        
-        CGRect rightToolbarHolderFrame = CGRectMake(CGRectGetWidth([UIScreen mainScreen].applicationFrame) - WPEditorToolbarButtonWidth,
+
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        [button addTarget:self
+                   action:@selector(btnMorePressed:)
+         forControlEvents:UIControlEventTouchUpInside];
+        button.frame = CGRectMake(0.0, 0.0, WPEditorToolbarButtonWidth, WPEditorToolbarButtonWidth);
+        button.titleLabel.font = font;
+        [button setTitle:imageString forState:UIControlStateNormal];
+
+        CGRect rightToolbarHolderFrame = CGRectMake(parentViewWidth - WPEditorToolbarButtonWidth - 5.0,
                                                     0.0f,
                                                     WPEditorToolbarButtonWidth,
                                                     WPEditorToolbarButtonHeight);
         rightToolbarHolder = [[UIView alloc] initWithFrame:rightToolbarHolderFrame];
-        //rightToolbarHolder.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-        //rightToolbarHolder.clipsToBounds = YES;
-        
-        _trashbtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        _trashbtn.frame = rightToolbarHolder.bounds;
-        _trashbtn.titleLabel.font = font;
-        //[_trashbtn setImage:icon forState:UIControlStateNormal];
-        [_trashbtn setTitle:imageString forState:UIControlStateNormal];
-        [_trashbtn addTarget:self action:@selector(btnMorePressed:) forControlEvents:UIControlEventTouchUpInside];
-    
-        [rightToolbarHolder addSubview:_trashbtn];
-        
+        rightToolbarHolder.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+        rightToolbarHolder.clipsToBounds = YES;
+
+        [rightToolbarHolder addSubview:button];
+
         _rightToolbarHolder = rightToolbarHolder;
     }
-    
+
     return rightToolbarHolder;
 }
 
@@ -435,21 +436,21 @@ if (!IS_IPAD) {
                                                                                style:UIBarButtonItemStylePlain
                                                                               target:nil
                                                                               action:nil];
-       
+
    //     FAKFontAwesome *ic = [FAKFontAwesome ellipsisVIconWithSize:20];
-        
+
    //     [ic addAttribute:NSForegroundColorAttributeName value:[UIColor
    //                                                                  whiteColor]];
 //        NSDictionary * attributes = @{NSFontAttributeName: ic};
 //        [htmlBarButtonItem setTitleTextAttributes:attributes forState:UIControlStateNormal];
 //        htmlBarButtonItem.accessibilityLabel = NSLocalizedString(@"Display HTML",
 //                                                                 @"Accessibility label for display HTML button on formatting toolbar.");
-//        
+//
         CGRect customButtonFrame = CGRectMake(0,
                                               0,
                                               WPEditorToolbarButtonWidth,
                                               WPEditorToolbarButtonHeight);
-        
+
         WPEditorToolbarButton* customButton = [[WPEditorToolbarButton alloc] initWithFrame:customButtonFrame];
         [customButton setTitle:@"HTML" forState:UIControlStateNormal];
         customButton.normalTintColor = [UIColor whiteColor];//self.itemTintColor;
@@ -459,12 +460,12 @@ if (!IS_IPAD) {
         [customButton addTarget:self
                          action:@selector(showHTMLSource:)
                forControlEvents:UIControlEventTouchUpInside];
-        
+
         htmlBarButtonItem.customView = customButton;
-        
+
         _htmlBarButtonItem = htmlBarButtonItem;
     }
-    
+
     return _htmlBarButtonItem;
 }
 
@@ -476,7 +477,7 @@ if (!IS_IPAD) {
 {
     if (self.backgroundColor != backgroundColor) {
         super.backgroundColor = backgroundColor;
-        
+
         self.leftToolbar.barTintColor = backgroundColor;
         self.rightToolbar.barTintColor = backgroundColor;
     }
@@ -486,7 +487,7 @@ if (!IS_IPAD) {
 {
     if (_borderColor != borderColor) {
         _borderColor = borderColor;
-        
+
         self.topBorderView.backgroundColor = borderColor;
         self.rightToolbarDivider.backgroundColor = borderColor;
     }
@@ -496,7 +497,7 @@ if (!IS_IPAD) {
 {
     if (_items != items) {
         _items = [items copy];
-        
+
         [self reloadItems];
     }
 }
@@ -504,16 +505,16 @@ if (!IS_IPAD) {
 - (void)setItemTintColor:(UIColor *)itemTintColor
 {
     _itemTintColor = itemTintColor;
-    
+
     for (UIBarButtonItem *item in self.leftToolbar.items) {
         item.tintColor = _itemTintColor;
     }
-    
+
     if (self.htmlBarButtonItem) {
         WPEditorToolbarButton* htmlButton = (WPEditorToolbarButton*)self.htmlBarButtonItem.customView;
         NSAssert([htmlButton isKindOfClass:[WPEditorToolbarButton class]],
                  @"Expected to have an HTML button of class WPEditorToolbarButton here.");
-        
+
         htmlButton.normalTintColor = itemTintColor;
         self.htmlBarButtonItem.tintColor = itemTintColor;
     }
@@ -527,7 +528,7 @@ if (!IS_IPAD) {
         WPEditorToolbarButton* htmlButton = (WPEditorToolbarButton*)self.htmlBarButtonItem.customView;
         NSAssert([htmlButton isKindOfClass:[WPEditorToolbarButton class]],
                  @"Expected to have an HTML button of class WPEditorToolbarButton here.");
-        
+
         htmlButton.selectedTintColor = selectedItemTintColor;
     }
 }
