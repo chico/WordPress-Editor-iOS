@@ -1665,6 +1665,7 @@ function ZSSField(wrappedObject) {
     this.multiline = false;
     this.wrappedObject = wrappedObject;
     this.bodyPlaceholderColor = '#000000';
+    this.bodyCSS = 'color:white';
     
     if (this.wrappedDomNode().hasAttribute('nostyle')) {
         this.hasNoStyle = true;
@@ -1923,7 +1924,7 @@ ZSSField.prototype.enableEditing = function () {
     this.wrappedObject.attr('contenteditable', true);
     
     if (!ZSSEditor.focusedField) {
-        ZSSEditor.focusFirstEditableField();
+       // ZSSEditor.focusFirstEditableField();
     }
 };
 
@@ -2019,7 +2020,7 @@ ZSSEditor.setTitleCss = function(css) {
 
 ZSSEditor.setBodyCss = function(css) {
     $("#zss_field_content").attr('style', css);
-    // setTimeout(function() { $("#zss_field_content").attr('style', css); }, 100);
+    //setTimeout(function() { $("#zss_field_content").attr('style', css); }, 100);
 };
 
 ZSSField.prototype.refreshPlaceholderColorForAttributes = function(hasPlaceholderText, isFocused, isEmpty) {
@@ -2032,6 +2033,8 @@ ZSSField.prototype.refreshPlaceholderColorForAttributes = function(hasPlaceholde
         } else {
             this.wrappedObject.css('color', this.bodyPlaceholderColor);
         }
+    }else{
+        this.wrappedObject.attr('style', this.bodyCSS);
     }
     
 };

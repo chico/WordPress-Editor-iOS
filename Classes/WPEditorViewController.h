@@ -149,4 +149,6 @@ WPEditorViewControllerMode;
  */
 - (void)showInsertImageAlternatePicker;
 
+- (void)canHideToolbarIcons:(BOOL)choice;
+
 @end

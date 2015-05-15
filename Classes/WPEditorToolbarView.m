@@ -395,13 +395,13 @@ if (!IS_IPAD) {
     
     if (!rightToolbarHolder) {
         
-        CGRect rightToolbarHolderFrame = CGRectMake(CGRectGetWidth(self.frame) - 45,
+        CGRect rightToolbarHolderFrame = CGRectMake(CGRectGetWidth([UIScreen mainScreen].applicationFrame) - WPEditorToolbarButtonWidth,
                                                     0.0f,
                                                     WPEditorToolbarButtonWidth,
                                                     WPEditorToolbarButtonHeight);
         rightToolbarHolder = [[UIView alloc] initWithFrame:rightToolbarHolderFrame];
-        rightToolbarHolder.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-        rightToolbarHolder.clipsToBounds = YES;
+        //rightToolbarHolder.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+        //rightToolbarHolder.clipsToBounds = YES;
         
         _trashbtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _trashbtn.frame = rightToolbarHolder.bounds;

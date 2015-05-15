@@ -110,7 +110,7 @@ NSInteger const WPLinkAlertViewTag = 92;
     _toolbarView.delegate = self;
     
     _toolbarView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    _toolbarView.backgroundColor = [UIColor whiteColor];
+    _toolbarView.backgroundColor = [UIColor clearColor];
     _toolbarView.borderColor = [WPStyleGuide readGrey];
     _toolbarView.itemTintColor = [WPStyleGuide textFieldPlaceholderGrey];
     _toolbarView.selectedItemTintColor = [WPStyleGuide baseDarkerBlue];
@@ -143,7 +143,7 @@ NSInteger const WPLinkAlertViewTag = 92;
     //
     self.isFirstSetupComplete = NO;
     self.didFinishLoadingEditor = NO;
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.backgroundColor = [UIColor clearColor];
     
     // Calling the fonts we use here so they are availible to the UIWebView
     [WPFontManager merriweatherBoldFontOfSize:30];
@@ -212,6 +212,23 @@ NSInteger const WPLinkAlertViewTag = 92;
 }
 
 #pragma mark - Toolbar items
+
+- (void)canHideToolbarIcons:(BOOL)choice{
+    UIView *v = [self.toolbarView.subviews objectAtIndex:0];
+    UIView *v1 = [v.subviews objectAtIndex:0];
+    UIToolbar *v2 = [v1.subviews objectAtIndex:0];
+    int count = 0;
+    for (int i=0; i<v2.subviews.count; i++) {
+        if (count < 6) {
+            id btn = [v2.subviews objectAtIndex:i];
+            if ([btn isKindOfClass:[WPEditorToolbarButton class]]) {
+                count++;
+                WPEditorToolbarButton *zssbtn = btn;
+                zssbtn.hidden = choice;
+            }
+        }
+    }
+}
 
 - (NSMutableArray *)itemsForToolbar
 {
@@ -1041,7 +1058,7 @@ NSInteger const WPLinkAlertViewTag = 92;
         CGFloat viewWidth = CGRectGetWidth(self.view.frame);
         UIViewAutoresizing mask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         
-        CGRect frame = CGRectMake(0.0f, 0.0f, viewWidth, CGRectGetHeight(self.view.frame) - self.toolbarView.frame.size.height);
+        CGRect frame = CGRectMake(0.0f, 0.0f, viewWidth, CGRectGetHeight(self.view.frame));
         
         self.editorView = [[WPEditorView alloc] initWithFrame:frame];
         self.editorView.delegate = self;
@@ -1052,7 +1069,8 @@ NSInteger const WPLinkAlertViewTag = 92;
         //self.editorView.sourceView.inputAccessoryView = self.toolbarView;
         // self.editorView.sourceViewTitleField.inputAccessoryView = self.toolbarView;
         [self.view addSubview:self.toolbarView];
-        self.toolbarView.backgroundColor = [UIColor whiteColor]; //colorWithRed:161.0/255.0 green:110.0/255.0 blue:109.0/255.0 alpha:1.0];
+        self.toolbarView.hidden = YES;
+        self.toolbarView.backgroundColor = [UIColor clearColor]; //colorWithRed:161.0/255.0 green:110.0/255.0 blue:109.0/255.0 alpha:1.0];
         
         self.editorView.titleField.tag = 0;
         
@@ -1708,11 +1726,13 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)editorView:(WPEditorView*)editorView
       fieldFocused:(WPEditorField*)field
 {
-    [self.delegate editorFocused];
-    [self.keyboardControls setActiveField:field];
     if (field == self.editorView.titleField) {
         [self.toolbarView enableToolbarItems:NO shouldShowSourceButton:YES];
     } else if (field == self.editorView.contentField) {
+        [self.delegate editorFocused];
+        if (self.keyboardControls.activeField != field) {
+            [self.keyboardControls setActiveField:field];
+        }
         [self.toolbarView enableToolbarItems:YES shouldShowSourceButton:YES];
     }
 }
