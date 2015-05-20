@@ -1665,7 +1665,7 @@ function ZSSField(wrappedObject) {
     this.multiline = false;
     this.wrappedObject = wrappedObject;
     this.bodyPlaceholderColor = '#000000';
-    this.bodyCSS = 'color:white';
+    this.bodyCSS = 'color:black';
     
     if (this.wrappedDomNode().hasAttribute('nostyle')) {
         this.hasNoStyle = true;
@@ -2019,6 +2019,7 @@ ZSSEditor.setTitleCss = function(css) {
 };
 
 ZSSEditor.setBodyCss = function(css) {
+    this.bodyCSS = css;
     $("#zss_field_content").attr('style', css);
     //setTimeout(function() { $("#zss_field_content").attr('style', css); }, 100);
 };
