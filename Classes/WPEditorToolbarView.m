@@ -421,7 +421,9 @@ if (!IS_IPAD) {
 
 
 -(void)changeTrashColor:(UIColor *)color{
-    [_trashbtn setTitleColor:color forState:UIControlStateNormal];
+    for (UIButton *v in _rightToolbarHolder.subviews) {
+        [v setTitleColor:color forState:UIControlStateNormal];
+    }
 }
 
 - (void)btnMorePressed:(UIButton *)sender{
