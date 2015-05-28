@@ -109,15 +109,23 @@ if (!IS_IPAD) {
         toolbarWidth += (numberOfItems * WPEditorToolbarButtonWidth);
         toolbarWidth += (numberOfItems * finalPaddingBetweenItems);
     }
-
-    UIBarButtonItem *negativeSeparator = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
-                                                                                       target:nil
-                                                                                       action:nil];
-    negativeSeparator.width = -toolbarItemsSeparation;
-
+   
     // This code adds a negative separator between all the toolbar buttons
     for (NSInteger i = [items count]; i >= 0; i--) {
-        [items insertObject:negativeSeparator atIndex:i];
+        if (i == 0) {
+            UIBarButtonItem *negativeSeparator = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                                               target:nil
+                                                                                               action:nil];
+            negativeSeparator.width = -16;
+            [items insertObject:negativeSeparator atIndex:i];
+        }else{
+            UIBarButtonItem *negativeSeparator = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                                               target:nil
+                                                                                               action:nil];
+            negativeSeparator.width = -toolbarItemsSeparation;
+            [items insertObject:negativeSeparator atIndex:i];
+        }
+
     }
 
     UIBarButtonItem *negativeSeparatorForToolbar = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace

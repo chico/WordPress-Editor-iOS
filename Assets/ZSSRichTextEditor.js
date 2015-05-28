@@ -274,7 +274,7 @@ ZSSEditor.getSelectedText = function() {
 
 ZSSEditor.getCaretArguments = function() {
     var caretInfo = this.getYCaretInfo();
-    
+  
     if (caretInfo == null) {
         return null;
     } else {
@@ -1730,12 +1730,15 @@ ZSSField.prototype.handleBlurEvent = function(e) {
 
 ZSSField.prototype.handleFocusEvent = function(e) {
     ZSSEditor.focusedField = this;
+    //alert(this.wrappedObject.text());
+
     
     // IMPORTANT: this is the only case where checking the current focus will not work.
     // We sidestep this issue by indicating that the field is about to gain focus.
     //
     this.refreshPlaceholderColorAboutToGainFocus(true);
     this.callback("callback-focus-in");
+  
 };
 
 ZSSField.prototype.handleKeyDownEvent = function(e) {
@@ -1888,10 +1891,37 @@ ZSSField.prototype.isFocused = function() {
     return this.wrappedObject.is(':focus');
 };
 
+$.fn.selectRange = function(start, end) {
+    this.focus();
+    
+    if(!end) end = start;
+    return this.each(function() {
+                     if (this.setSelectionRange) {
+                     this.focus();
+                     this.setSelectionRange(start, end);
+                     } else if (this.createTextRange) {
+                     var range = this.createTextRange();
+                     range.collapse(true);
+                     range.moveEnd('character', end);
+                     range.moveStart('character', start);
+                     range.select();
+                     }
+                     });
+};
+
 ZSSField.prototype.focus = function() {
     
     if (!this.isFocused()) {
         this.wrappedObject.focus();
+        //this.wrappedObject.selectRange(3); // set cursor position
+        //this.wrappedObject.focus().html("").html("MILANNASA");
+//        var ele =  this.wrappedObject;
+//        var v= this.wrappedObject.text();
+//        this.wrappedObject.text('A');
+//    
+//        setTimeout(function() {
+//                   ele.text("MILAN");
+//                   }, 1000);
     }
 };
 
