@@ -13,6 +13,11 @@
  *  @brief      nodeId      The ID of the HTML node this editor field wraps.
  */
 @property (nonatomic, copy, readonly) NSString* nodeId;
+/**
+ *  @brief      The web view to use for all javascript calls.
+ */
+@property (nonatomic, strong, readonly) UIWebView* webView;
+
 
 #pragma mark - Initializers
 

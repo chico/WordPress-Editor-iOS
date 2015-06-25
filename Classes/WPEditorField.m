@@ -12,10 +12,6 @@ static NSString* const kWPEditorFieldJavascriptTrue = @"true";
  */
 @property (nonatomic, assign, readwrite) BOOL domLoaded;
 
-/**
- *  @brief      The web view to use for all javascript calls.
- */
-@property (nonatomic, strong, readonly) UIWebView* webView;
 
 #pragma mark - Properties: preloaded values
 
