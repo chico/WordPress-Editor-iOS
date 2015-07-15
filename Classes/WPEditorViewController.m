@@ -1754,8 +1754,9 @@ NSInteger const WPLinkAlertViewTag = 92;
              title:(NSString*)title
 {
     if (self.isEditing) {
-        [self showInsertLinkDialogWithLink:url.absoluteString
-                                     title:title];
+        [self.delegate editorLinkPressed:url.absoluteString title:title];
+        //[self showInsertLinkDialogWithLink:url.absoluteString
+        //                             title:title];
     }
     
     return YES;

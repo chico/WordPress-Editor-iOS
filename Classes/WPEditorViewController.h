@@ -27,6 +27,8 @@ WPEditorViewControllerMode;
 - (void)editorDidPressMedia:(WPEditorViewController *)editorController;
 - (void)editorDidPressTrash:(WPEditorViewController *)editorController;
 - (void)editorFocused;
+- (void)editorLinkPressed:(NSString*)url
+                    title:(NSString*)title;
 
 /**
  *	@brief		Received when the field is created and can be used.
