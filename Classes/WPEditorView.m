@@ -84,14 +84,14 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
 		CGRect childFrame = frame;
 		childFrame.origin = CGPointZero;
 		
-        [self createSourceTitleViewWithFrame: childFrame];
-        [self createSourceDividerViewWithFrame:CGRectMake(0.0f, CGRectGetMaxY(self.sourceViewTitleField.frame), CGRectGetWidth(childFrame), 1.0f)];
-        CGRect sourceViewFrame = CGRectMake(0.0f,
-                                            CGRectGetMaxY(self.sourceContentDividerView.frame),
-                                            CGRectGetWidth(childFrame),
-                                            CGRectGetHeight(childFrame)-CGRectGetHeight(self.sourceViewTitleField.frame)-CGRectGetHeight(self.sourceContentDividerView.frame));
-        
-        [self createSourceViewWithFrame:sourceViewFrame];
+        //[self createSourceTitleViewWithFrame: childFrame];
+        //[self createSourceDividerViewWithFrame:CGRectMake(0.0f, CGRectGetMaxY(self.sourceViewTitleField.frame), CGRectGetWidth(childFrame), 1.0f)];
+//        CGRect sourceViewFrame = CGRectMake(0.0f,
+//                                            CGRectGetMaxY(self.sourceContentDividerView.frame),
+//                                            CGRectGetWidth(childFrame),
+//                                            CGRectGetHeight(childFrame)-CGRectGetHeight(self.sourceViewTitleField.frame)-CGRectGetHeight(self.sourceContentDividerView.frame));
+//        
+//        [self createSourceViewWithFrame:sourceViewFrame];
 		[self createWebViewWithFrame:childFrame];
 		[self setupHTMLEditor];
 	}
@@ -426,6 +426,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
     // to have focus, we'll just make sure the inputAccessoryView is taken into account when
     // hiding the keyboard.
     //
+    NSLog(@"%@",[notification userInfo]);
     CGFloat vOffset = self.sourceView.inputAccessoryView.frame.size.height;
     UIEdgeInsets insets = UIEdgeInsetsMake(0.0f, 0.0f, vOffset, 0.0f);
     
@@ -1219,16 +1220,55 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     CGRect viewport = [self viewport];
     CGFloat caretYOffset = [self.caretYOffset floatValue];
     CGFloat lineHeight = [self.lineHeight floatValue];
-    CGFloat offsetBottom = caretYOffset + lineHeight;
+    CGFloat offsetBottom = caretYOffset + lineHeight + 80;
     
     BOOL mustScroll = (caretYOffset < viewport.origin.y
                        || offsetBottom > viewport.origin.y + CGRectGetHeight(viewport));
     
     if (mustScroll) {
+        NSLog(@"Must scroll");
         // DRM: by reducing the necessary height we avoid an issue that moves the caret out
         // of view.
         //
-        CGFloat necessaryHeight = viewport.size.height / 2;
+        CGFloat necessaryHeight = (viewport.size.height / 2);
+        
+        // DRM: just make sure we don't go out of bounds with the desired yOffset.
+        //
+        caretYOffset = MIN(caretYOffset,
+                           self.webView.scrollView.contentSize.height - necessaryHeight);
+        
+        CGRect targetRect = CGRectMake(0.0f,
+                                       caretYOffset,
+                                       CGRectGetWidth(viewport),
+                                       necessaryHeight);
+        
+        [self.webView.scrollView scrollRectToVisible:targetRect animated:animated];
+        
+    }
+}
+
+- (void)scrollToEnd:(BOOL)animated
+{
+    BOOL notEnoughInfoToScroll = self.caretYOffset == nil || self.lineHeight == nil;
+    
+    if (notEnoughInfoToScroll) {
+        return;
+    }
+    
+    CGRect viewport = [self viewport];
+    CGFloat caretYOffset =  self.webView.scrollView.contentSize.height; //[self.caretYOffset floatValue];
+    CGFloat lineHeight = [self.lineHeight floatValue];
+    CGFloat offsetBottom = caretYOffset + lineHeight + 80;
+    
+    BOOL mustScroll = (caretYOffset < viewport.origin.y
+                       || offsetBottom > viewport.origin.y + CGRectGetHeight(viewport));
+    
+    if (mustScroll) {
+        NSLog(@"Must scroll");
+        // DRM: by reducing the necessary height we avoid an issue that moves the caret out
+        // of view.
+        //
+        CGFloat necessaryHeight = (viewport.size.height / 2);
         
         // DRM: just make sure we don't go out of bounds with the desired yOffset.
         //
@@ -1243,6 +1283,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
         [self.webView.scrollView scrollRectToVisible:targetRect animated:animated];
     }
 }
+
 
 #pragma mark - Selection
 

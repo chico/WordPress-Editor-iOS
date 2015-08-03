@@ -301,6 +301,8 @@ stylesForCurrentSelection:(NSArray*)styles;
 - (void)quickLink;
 - (void)removeLink;
 
+- (void)scrollToEnd:(BOOL)animated;
+
 #pragma mark - Editing
 
 /**
