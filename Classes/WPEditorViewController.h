@@ -86,6 +86,8 @@ WPEditorViewControllerMode;
 @property (nonatomic, copy) NSString *bodyText;
 @property (nonatomic, copy) NSString *bodyPlaceholderText;
 @property (nonatomic, strong) BSKeyboardControls *keyboardControls;
+@property (nonatomic, assign, readwrite) BOOL wasEditing;
+@property (nonatomic, assign, readwrite) BOOL isInitial;
 
 #pragma mark - Properties: Editor View
 @property (nonatomic, strong, readonly) WPEditorView *editorView;

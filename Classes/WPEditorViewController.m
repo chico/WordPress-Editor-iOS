@@ -36,7 +36,6 @@ NSInteger const WPLinkAlertViewTag = 92;
 #pragma mark - Properties: Editing
 @property (nonatomic, assign, readwrite, getter=isEditingEnabled) BOOL editingEnabled;
 @property (nonatomic, assign, readwrite, getter=isEditing) BOOL editing;
-@property (nonatomic, assign, readwrite) BOOL wasEditing;
 @property (nonatomic, assign) NSTimer *timerEditing;
 
 #pragma mark - Properties: Editor View
@@ -1730,16 +1729,15 @@ NSInteger const WPLinkAlertViewTag = 92;
     if (field == self.editorView.titleField) {
         [self.toolbarView enableToolbarItems:NO shouldShowSourceButton:YES];
     } else if (field == self.editorView.contentField) {
-        self.wasEditing = NO;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW,2.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            self.wasEditing = YES;
-        });
-
         [self.delegate editorFocused];
         if (self.keyboardControls.activeField != field) {
             [self.keyboardControls setActiveField:field];
         }
         [self.toolbarView enableToolbarItems:YES shouldShowSourceButton:YES];
+        self.wasEditing = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW,2.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            self.wasEditing = YES;
+        });
     }
 }
 
@@ -1760,7 +1758,9 @@ NSInteger const WPLinkAlertViewTag = 92;
              title:(NSString*)title
 {
     if (self.isEditing) {
-        if (self.wasEditing) {
+        if (self.wasEditing && !self.isInitial) {
+            self.wasEditing = NO;
+            
             [self showInsertLinkDialogWithLink:url.absoluteString
                                          title:title];
         }else{
