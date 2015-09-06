@@ -49,6 +49,7 @@ ZSSEditor.defaultParagraphSeparator = 'p';
 /**
  * The initializer function that must be called onLoad
  */
+
 ZSSEditor.init = function() {
     
     rangy.init();
@@ -587,6 +588,7 @@ ZSSEditor.insertLink = function(url, title) {
     ZSSEditor.restoreRange();
     
     var sel = document.getSelection();
+    
     if (sel.rangeCount) {
         
         var el = document.createElement("a");
@@ -597,8 +599,11 @@ ZSSEditor.insertLink = function(url, title) {
         el.innerHTML = title;
         sel.removeAllRanges();
         sel.addRange(range);
+        sel.removeAllRanges();
     }
     
+    ZSSEditor.restoreRange();
+
     ZSSEditor.sendEnabledStyles();
 };
 
@@ -624,7 +629,7 @@ ZSSEditor.unlink = function() {
         ZSSEditor.unwrapNode(currentLinkNode);
     }
     
-    rangy.restoreSelection(savedSelection);
+    //rangy.restoreSelection(savedSelection);
     
     ZSSEditor.sendEnabledStyles();
 };
@@ -1676,6 +1681,43 @@ function ZSSField(wrappedObject) {
     this.bindListeners();
 };
 
+$.fn.pasteEvents = function (delay) {
+    if (delay === undefined) delay = 20;
+    return $(this).each(function () {
+                        var $el = $(this);
+                        $el.bind("paste", function () {
+                                 $el.trigger("prepaste");
+                                 setTimeout(function () {
+                                            $el.trigger("postpaste");
+                                            }, delay);
+                                 });
+                        });
+};
+
+//The cool plugin
+$.fn.pasteFilter = function (paste_modifier) {
+    
+    var oldValue;
+    var diff = new diff_match_patch();
+    
+    return $(this).each(function () {
+                        var $el = $(this);
+                        $el.bind("prepaste", function (e) {
+                                 oldValue = e.target.value;
+                                 }).bind("postpaste", function (e) {
+                                         var diffs = diff.diff_main(oldValue, e.target.value);
+                                         $.each(diffs, function (k, v) {
+                                                var text = v[1];
+                                                if (v[0] === 1) {
+                                                v[1] = paste_modifier(text);
+                                                }
+                                                });
+                                         var newText = diff.patch_apply(diff.patch_make(diffs), oldValue)[0];
+                                         e.target.value = newText;
+                                         }).pasteEvents();
+                        });
+};
+
 ZSSField.prototype.bindListeners = function() {
     
     var thisObj = this;
@@ -1687,6 +1729,33 @@ ZSSField.prototype.bindListeners = function() {
     this.wrappedObject.bind('input', function(e) { thisObj.handleInputEvent(e); });
     this.wrappedObject.bind('compositionstart', function(e) { thisObj.handleCompositionStartEvent(e); });
     this.wrappedObject.bind('compositionend', function(e) { thisObj.handleCompositionEndEvent(e); });
+    
+    
+    this.wrappedObject.bind('paste', function(e) {
+            var data = e.originalEvent.clipboardData.getData('Text');
+            
+            var re = /(https?:\/\/(([-\w\.]+)+(:\d+)?(\/([\w/_\.]*(\?\S+)?)?)?))/g;
+            data = data.replace(re, "<a href=\"$1\" title=\"\">$1</a>");
+            
+            var sel = document.getSelection();
+            
+            if (sel.rangeCount) {
+                ZSSEditor.restoreRange();
+                e.preventDefault();
+                var el = document.createElement("span");
+                var range = sel.getRangeAt(0).cloneRange();
+                range.surroundContents(el);
+                el.innerHTML = data;
+                sel.removeAllRanges();
+                sel.addRange(range);
+                sel.removeAllRanges();
+                ZSSEditor.restoreRange();
+                ZSSEditor.sendEnabledStyles();
+            }else{
+            
+            }
+    });
+
 };
 
 // MARK: - Emptying the field when it should be, well... empty (HTML madness)
@@ -1755,6 +1824,8 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
         document.execCommand('formatBlock', false, 'p');
     }
 };
+
+
 
 ZSSField.prototype.handleInputEvent = function(e) {
     
