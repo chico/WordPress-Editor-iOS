@@ -426,7 +426,6 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
     // to have focus, we'll just make sure the inputAccessoryView is taken into account when
     // hiding the keyboard.
     //
-    NSLog(@"%@",[notification userInfo]);
     CGFloat vOffset = self.sourceView.inputAccessoryView.frame.size.height;
     UIEdgeInsets insets = UIEdgeInsetsMake(0.0f, 0.0f, vOffset, 0.0f);
     
@@ -1226,7 +1225,6 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
                        || offsetBottom > viewport.origin.y + CGRectGetHeight(viewport));
     
     if (mustScroll) {
-        NSLog(@"Must scroll");
         // DRM: by reducing the necessary height we avoid an issue that moves the caret out
         // of view.
         //
@@ -1264,7 +1262,6 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
                        || offsetBottom > viewport.origin.y + CGRectGetHeight(viewport));
     
     if (mustScroll) {
-        NSLog(@"Must scroll");
         // DRM: by reducing the necessary height we avoid an issue that moves the caret out
         // of view.
         //

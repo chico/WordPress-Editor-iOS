@@ -1746,7 +1746,7 @@ ZSSField.prototype.bindListeners = function() {
                 var range = sel.getRangeAt(0).cloneRange();
                 range.surroundContents(el);
                 el.innerHTML = data;
-                sel.removeAllRanges();
+                //sel.removeAllRanges();
                 sel.addRange(range);
                 sel.removeAllRanges();
                 ZSSEditor.restoreRange();
