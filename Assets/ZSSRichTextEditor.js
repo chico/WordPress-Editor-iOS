@@ -46,6 +46,9 @@ ZSSEditor.lastTappedNode = null;
 // The default paragraph separator
 ZSSEditor.defaultParagraphSeparator = 'p';
 
+ZSSEditor.newCSS = 'color:black';
+
+
 /**
  * The initializer function that must be called onLoad
  */
@@ -2120,7 +2123,7 @@ ZSSEditor.setTitleCss = function(css) {
 };
 
 ZSSEditor.setBodyCss = function(css) {
-    this.bodyCSS = css;
+    ZSSEditor.newCSS = css;
     $("#zss_field_content").attr('style', css);
     //setTimeout(function() { $("#zss_field_content").attr('style', css); }, 100);
 };
@@ -2136,7 +2139,7 @@ ZSSField.prototype.refreshPlaceholderColorForAttributes = function(hasPlaceholde
             this.wrappedObject.css('color', this.bodyPlaceholderColor);
         }
     }else{
-        this.wrappedObject.attr('style', this.bodyCSS);
+        this.wrappedObject.attr('style', ZSSEditor.newCSS);
     }
     
 };
