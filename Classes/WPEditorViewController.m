@@ -117,7 +117,7 @@ NSInteger const WPLinkAlertViewTag = 92;
     
     _toolbarView.items = [self itemsForToolbar];
     
-    [_toolbarView buildRightToolbar:self.fontAwesome imageString:[self.arrIcons objectAtIndex:5]];
+    //[_toolbarView buildRightToolbar:self.fontAwesome imageString:[self.arrIcons objectAtIndex:5]];
     
     [self buildTextViews];
 }
@@ -1706,7 +1706,7 @@ NSInteger const WPLinkAlertViewTag = 92;
     //     field.inputAccessoryView = self.toolbar;
         //  field.inputAccessoryView = self.toolbarView;
         
-        field.inputAccessoryView = self.keyboardControls;
+        //field.inputAccessoryView = self.keyboardControls;
         
         [field setRightToLeftTextEnabled:[self isCurrentLanguageDirectionRTL]];
         [field setMultiline:YES];
