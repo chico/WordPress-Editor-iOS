@@ -54,9 +54,9 @@ ZSSEditor.newCSS = 'color:black';
  */
 
 ZSSEditor.init = function() {
-    
+
     rangy.init();
-    
+
     // Change a few CSS values if the device is an iPad
     ZSSEditor.isiPad = (navigator.userAgent.match(/iPad/i) != null);
     if (ZSSEditor.isiPad) {
@@ -64,18 +64,18 @@ ZSSEditor.init = function() {
         $('#zss_field_title').addClass('ipad_field_title');
         $('#zss_field_content').addClass('ipad_field_content');
     }
-    
+
     document.execCommand('insertBrOnReturn', false, false);
     document.execCommand('defaultParagraphSeparator', false, this.defaultParagraphSeparator);
-    
+
     var editor = $('div.field').each(function() {
                                      var editableField = new ZSSField($(this));
                                      var editableFieldId = editableField.getNodeId();
-                                     
+
                                      ZSSEditor.editableFields[editableFieldId] = editableField;
                                      ZSSEditor.callback("callback-new-field", "id=" + editableFieldId);
                                      });
-    
+
     document.addEventListener("selectionchange", function(e) {
                               ZSSEditor.currentEditingLink = null;
                               // DRM: only do something here if the editor has focus.  The reason is that when the
@@ -91,7 +91,7 @@ ZSSEditor.init = function() {
                               }
                               }
                               }, false);
-    
+
 }; //end
 
 // MARK: - Debugging logs
@@ -99,16 +99,16 @@ ZSSEditor.init = function() {
 ZSSEditor.logMainElementSizes = function() {
     msg = 'Window [w:' + $(window).width() + '|h:' + $(window).height() + ']';
     this.log(msg);
-    
+
     var msg = encodeURIComponent('Viewport [w:' + window.innerWidth + '|h:' + window.innerHeight + ']');
     this.log(msg);
-    
+
     msg = encodeURIComponent('Body [w:' + $(document.body).width() + '|h:' + $(document.body).height() + ']');
     this.log(msg);
-    
+
     msg = encodeURIComponent('HTML [w:' + $('html').width() + '|h:' + $('html').height() + ']');
     this.log(msg);
-    
+
     msg = encodeURIComponent('Document [w:' + $(document).width() + '|h:' + $(document).height() + ']');
     this.log(msg);
 };
@@ -127,12 +127,12 @@ ZSSEditor.focusFirstEditableField = function() {
 };
 
 ZSSEditor.formatNewLine = function(e) {
-    
+
     var currentField = this.getFocusedField();
-    
+
     if (currentField.isMultiline()) {
         var parentBlockQuoteNode = ZSSEditor.closerParentNodeWithName('blockquote');
-        
+
         if (parentBlockQuoteNode) {
             this.formatNewLineInsideBlockquote(e);
         } else if (!ZSSEditor.isCommandEnabled('insertOrderedList')
@@ -151,23 +151,23 @@ ZSSEditor.formatNewLineInsideBlockquote = function(e) {
 };
 
 ZSSEditor.getField = function(fieldId) {
-    
+
     var field = this.editableFields[fieldId];
-    
+
     return field;
 };
 
 ZSSEditor.getFocusedField = function() {
     var currentField = $(this.closerParentNodeWithName('div'));
     var currentFieldId = currentField.attr('id');
-    
+
     while (currentField
            && (!currentFieldId || this.editableFields[currentFieldId] == null)) {
         currentField = this.closerParentNodeStartingAtNode('div', currentField);
         currentFieldId = currentField.attr('id');
-        
+
     }
-    
+
     return this.editableFields[currentFieldId];
 };
 
@@ -180,26 +180,26 @@ ZSSEditor.log = function(msg) {
 // MARK: - Callbacks
 
 ZSSEditor.domLoadedCallback = function() {
-    
+
     ZSSEditor.callback("callback-dom-loaded");
 };
 
 ZSSEditor.selectionChangedCallback = function () {
-    
+
     var joinedArguments = ZSSEditor.getJoinedFocusedFieldIdAndCaretArguments();
-    
+
     ZSSEditor.callback('callback-selection-changed', joinedArguments);
     this.callback("callback-input", joinedArguments);
 };
 
 ZSSEditor.callback = function(callbackScheme, callbackPath) {
-    
+
     var url =  callbackScheme + ":";
-    
+
     if (callbackPath) {
         url = url + callbackPath;
     }
-    
+
     if (isUsingiOS) {
         ZSSEditor.callbackThroughIFrame(url);
     } else {
@@ -219,27 +219,27 @@ ZSSEditor.callback = function(callbackScheme, callbackPath) {
 ZSSEditor.callbackThroughIFrame = function(url) {
     var iframe = document.createElement("IFRAME");
     iframe.setAttribute("src", url);
-    
+
     // IMPORTANT: the IFrame was showing up as a black box below our text.  By setting its borders
     // to be 0px transparent we make sure it's not shown at all.
     //
     // REF BUG: https://github.com/wordpress-mobile/WordPress-iOS-Editor/issues/318
     //
     iframe.style.cssText = "border: 0px transparent;";
-    
+
     document.documentElement.appendChild(iframe);
     iframe.parentNode.removeChild(iframe);
     iframe = null;
 };
 
 ZSSEditor.stylesCallback = function(stylesArray) {
-    
+
     var stylesString = '';
-    
+
     if (stylesArray.length > 0) {
         stylesString = stylesArray.join(defaultCallbackSeparator);
     }
-    
+
     ZSSEditor.callback("callback-selection-style", stylesString);
 };
 
@@ -248,7 +248,7 @@ ZSSEditor.stylesCallback = function(stylesArray) {
 ZSSEditor.backupRange = function(){
     var selection = window.getSelection();
     var range = selection.getRangeAt(0);
-    
+
     ZSSEditor.currentSelection =
     {
         "startContainer": range.startContainer,
@@ -262,7 +262,7 @@ ZSSEditor.restoreRange = function(){
     if (this.currentSelection) {
         var selection = window.getSelection();
         selection.removeAllRanges();
-        
+
         var range = document.createRange();
         range.setStart(this.currentSelection.startContainer, this.currentSelection.startOffset);
         range.setEnd(this.currentSelection.endContainer, this.currentSelection.endOffset);
@@ -272,13 +272,13 @@ ZSSEditor.restoreRange = function(){
 
 ZSSEditor.getSelectedText = function() {
     var selection = window.getSelection();
-    
+
     return selection.toString();
 };
 
 ZSSEditor.getCaretArguments = function() {
     var caretInfo = this.getYCaretInfo();
-  
+
     if (caretInfo == null) {
         return null;
     } else {
@@ -289,20 +289,20 @@ ZSSEditor.getCaretArguments = function() {
 };
 
 ZSSEditor.getJoinedFocusedFieldIdAndCaretArguments = function() {
-    
+
     var joinedArguments = ZSSEditor.getJoinedCaretArguments();
     var idArgument = "id=" + ZSSEditor.getFocusedField().getNodeId();
-    
+
     joinedArguments = idArgument + defaultCallbackSeparator + joinedArguments;
-    
+
     return joinedArguments;
 };
 
 ZSSEditor.getJoinedCaretArguments = function() {
-    
+
     var caretArguments = this.getCaretArguments();
     var joinedArguments = this.caretArguments.join(defaultCallbackSeparator);
-    
+
     return joinedArguments;
 };
 
@@ -317,26 +317,26 @@ ZSSEditor.getCaretYPosition = function() {
     var y = span.offsetTop;
     var spanParent = span.parentNode;
     spanParent.removeChild(span);
-    
+
     // Glue any broken text nodes back together
     spanParent.normalize();
-    
+
     return y;
 }
 
 ZSSEditor.getYCaretInfo = function() {
     var selection = window.getSelection();
     var noSelectionAvailable = selection.rangeCount == 0;
-    
+
     if (noSelectionAvailable) {
         return null;
     }
-    
+
     var y = 0;
     var height = 0;
     var range = selection.getRangeAt(0);
     var needsToWorkAroundNewlineBug = (range.getClientRects().length == 0);
-    
+
     // PROBLEM: iOS seems to have problems getting the offset for some empty nodes and return
     // 0 (zero) as the selection range top offset.
     //
@@ -345,10 +345,10 @@ ZSSEditor.getYCaretInfo = function() {
     if (needsToWorkAroundNewlineBug) {
         var closerParentNode = ZSSEditor.closerParentNode();
         var closerDiv = ZSSEditor.closerParentNodeWithName('div');
-        
+
         var fontSize = $(closerParentNode).css('font-size');
         var lineHeight = Math.floor(parseInt(fontSize.replace('px','')) * 1.5);
-        
+
         y = this.getCaretYPosition();
         height = lineHeight;
     } else {
@@ -364,20 +364,20 @@ ZSSEditor.getYCaretInfo = function() {
                 // should add the scroll offset.
                 //
                 var addsScrollOffset = document.body.getClientRects()[0].top < 0;
-                
+
                 if (addsScrollOffset) {
                     y = document.body.scrollTop;
                 }
-                
+
                 y += rects[0].top;
                 height = rects[0].height;
             }
         }
     }
-    
+
     this.caretInfo.y = y;
     this.caretInfo.height = height;
-    
+
     return this.caretInfo;
 };
 
@@ -412,48 +412,48 @@ ZSSEditor.setSuperscript = function() {
 ZSSEditor.setStrikeThrough = function() {
     var commandName = 'strikeThrough';
     var isDisablingStrikeThrough = ZSSEditor.isCommandEnabled(commandName);
-    
+
     document.execCommand(commandName, false, null);
-    
+
     // DRM: WebKit has a problem disabling strikeThrough when the tag <del> is used instead of
     // <strike>.  The code below serves as a way to fix this issue.
     //
     var mustHandleWebKitIssue = (isDisablingStrikeThrough
                                  && ZSSEditor.isCommandEnabled(commandName));
-    
+
     if (mustHandleWebKitIssue) {
         var troublesomeNodeNames = ['del'];
-        
+
         var selection = window.getSelection();
         var range = selection.getRangeAt(0).cloneRange();
-        
+
         var container = range.commonAncestorContainer;
         var nodeFound = false;
         var textNode = null;
-        
+
         while (container && !nodeFound) {
             nodeFound = (container
                          && container.nodeType == document.ELEMENT_NODE
                          && troublesomeNodeNames.indexOf(container.nodeName.toLowerCase()) > -1);
-            
+
             if (!nodeFound) {
                 container = container.parentElement;
             }
         }
-        
+
         if (container) {
             var newObject = $(container).replaceWith(container.innerHTML);
-            
+
             var finalSelection = window.getSelection();
             var finalRange = selection.getRangeAt(0).cloneRange();
-            
+
             finalRange.setEnd(finalRange.startContainer, finalRange.startOffset + 1);
-            
+
             selection.removeAllRanges();
             selection.addRange(finalRange);
         }
     }
-    
+
     ZSSEditor.sendEnabledStyles();
 };
 
@@ -465,19 +465,19 @@ ZSSEditor.setUnderline = function() {
 ZSSEditor.setBlockquote = function() {
     var formatTag = "blockquote";
     var formatBlock = document.queryCommandValue('formatBlock');
-    
+
     if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
         document.execCommand('formatBlock', false, this.defaultParagraphSeparatorTag());
     } else {
         var blockquoteNode = this.closerParentNodeWithName(formatTag);
-        
+
         if (blockquoteNode) {
             this.unwrapNode(blockquoteNode);
         } else {
             document.execCommand('formatBlock', false, '<' + formatTag + '>');
         }
     }
-    
+
     ZSSEditor.sendEnabledStyles();
 };
 
@@ -494,26 +494,26 @@ ZSSEditor.setHorizontalRule = function() {
 ZSSEditor.setHeading = function(heading) {
     var formatTag = heading;
     var formatBlock = document.queryCommandValue('formatBlock');
-    
+
     if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
         document.execCommand('formatBlock', false, this.defaultParagraphSeparatorTag());
     } else {
         document.execCommand('formatBlock', false, '<' + formatTag + '>');
     }
-    
+
     ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.setParagraph = function() {
     var formatTag = "p";
     var formatBlock = document.queryCommandValue('formatBlock');
-    
+
     if (formatBlock.length > 0 && formatBlock.toLowerCase() == formatTag) {
         document.execCommand('formatBlock', false, this.defaultParagraphSeparatorTag());
     } else {
         document.execCommand('formatBlock', false, '<' + formatTag + '>');
     }
-    
+
     ZSSEditor.sendEnabledStyles();
 };
 
@@ -587,16 +587,16 @@ ZSSEditor.setBackgroundColor = function(color) {
 // Needs addClass method
 
 ZSSEditor.insertLink = function(url, title) {
-    
+
     ZSSEditor.restoreRange();
-    
+
     var sel = document.getSelection();
-    
+
     if (sel.rangeCount) {
-        
+
         var el = document.createElement("a");
         el.setAttribute("href", url);
-        
+
         var range = sel.getRangeAt(0).cloneRange();
         range.surroundContents(el);
         el.innerHTML = title;
@@ -604,18 +604,18 @@ ZSSEditor.insertLink = function(url, title) {
         sel.addRange(range);
         sel.removeAllRanges();
     }
-    
+
     ZSSEditor.restoreRange();
 
     ZSSEditor.sendEnabledStyles();
 };
 
 ZSSEditor.updateLink = function(url, title) {
-    
+
     ZSSEditor.restoreRange();
-    
+
     var currentLinkNode = ZSSEditor.lastTappedNode;
-    
+
     if (currentLinkNode) {
         currentLinkNode.setAttribute("href", url);
         currentLinkNode.innerHTML = title;
@@ -625,15 +625,15 @@ ZSSEditor.updateLink = function(url, title) {
 
 ZSSEditor.unlink = function() {
     var savedSelection = rangy.saveSelection();
-    
+
     var currentLinkNode = ZSSEditor.closerParentNodeWithName('a');
-    
+
     if (currentLinkNode) {
         ZSSEditor.unwrapNode(currentLinkNode);
     }
-    
+
     //rangy.restoreSelection(savedSelection);
-    
+
     ZSSEditor.sendEnabledStyles();
 };
 
@@ -642,7 +642,7 @@ ZSSEditor.unwrapNode = function(node) {
 };
 
 ZSSEditor.quickLink = function() {
-    
+
     var sel = document.getSelection();
     var link_url = "";
     var test = new String(sel);
@@ -667,7 +667,7 @@ ZSSEditor.quickLink = function() {
             link_url = sel;
         }
     }
-    
+
     var html_code = '<a href="' + link_url + '">' + sel + '</a>';
     ZSSEditor.insertHTML(html_code);
 };
@@ -675,21 +675,21 @@ ZSSEditor.quickLink = function() {
 // MARK: - Images
 
 ZSSEditor.updateImage = function(url, alt) {
-    
+
     ZSSEditor.restoreRange();
-    
+
     if (ZSSEditor.currentEditingImage) {
         var c = ZSSEditor.currentEditingImage;
         c.attr('src', url);
         c.attr('alt', alt);
     }
     ZSSEditor.sendEnabledStyles();
-    
+
 };
 
 ZSSEditor.insertImage = function(url, alt) {
     var html = '<img src="'+url+'" alt="'+alt+'" />';
-    
+
     this.insertHTML(html);
     this.sendEnabledStyles();
 };
@@ -717,7 +717,7 @@ ZSSEditor.insertLocalImage = function(imageNodeIdentifier, localImageUrl) {
     var image = '<img data-wpid="' + imageNodeIdentifier + '" src="' + localImageUrl + '" alt="" />';
     var html = imgContainerStart + progress+image + imgContainerEnd;
     html = space + html + space;
-    
+
     this.insertHTML(html);
     this.sendEnabledStyles();
 };
@@ -756,23 +756,23 @@ ZSSEditor.getImageContainerNodeWithIdentifier = function(imageNodeIdentifier) {
  */
 ZSSEditor.replaceLocalImageWithRemoteImage = function(imageNodeIdentifier, remoteImageUrl) {
     var imageNode = this.getImageNodeWithIdentifier(imageNodeIdentifier);
-    
+
     if (imageNode.length == 0) {
         // even if the image is not present anymore we must do callback
         this.markImageUploadDone(imageNodeIdentifier);
         return;
     }
-    
+
     var image = new Image;
-    
+
     image.onload = function () {
         imageNode.attr('src', image.src);
         ZSSEditor.markImageUploadDone(imageNodeIdentifier);
         var joinedArguments = ZSSEditor.getJoinedFocusedFieldIdAndCaretArguments();
         ZSSEditor.callback("callback-input", joinedArguments);
-        
+
     }
-    
+
     image.onerror = function () {
         // Even on an error, we swap the image for the time being.  This is because private
         // blogs are currently failing to download images due to access privilege issues.
@@ -781,9 +781,9 @@ ZSSEditor.replaceLocalImageWithRemoteImage = function(imageNodeIdentifier, remot
         ZSSEditor.markImageUploadDone(imageNodeIdentifier);
         var joinedArguments = ZSSEditor.getJoinedFocusedFieldIdAndCaretArguments();
         ZSSEditor.callback("callback-input", joinedArguments);
-        
+
     }
-    
+
     image.src = remoteImageUrl;
 };
 
@@ -801,7 +801,7 @@ ZSSEditor.setProgressOnImage = function(imageNodeIdentifier, progress) {
     if (progress < 1){
         imageNode.addClass("uploading");
     }
-    
+
     var imageProgressNode = this.getImageProgressNodeWithIdentifier(imageNodeIdentifier);
     if (imageProgressNode.length == 0){
         return;
@@ -815,21 +815,21 @@ ZSSEditor.setProgressOnImage = function(imageNodeIdentifier, progress) {
  *  @param      imageNodeIdentifier     The unique image ID for the uploaded image
  */
 ZSSEditor.markImageUploadDone = function(imageNodeIdentifier) {
-    
+
     this.sendImageReplacedCallback(imageNodeIdentifier);
-    
+
     var imageNode = this.getImageNodeWithIdentifier(imageNodeIdentifier);
     if (imageNode.length == 0){
         return;
     }
-    
+
     // remove identifier attributed from image
     imageNode.removeAttr('data-wpid');
-    
+
     // remove uploading style
     imageNode.removeClass("uploading");
     imageNode.removeAttr("class");
-    
+
     // Remove all extra formatting nodes for progress
     if (imageNode.parent().attr("id") == this.getImageContainerIdentifier(imageNodeIdentifier)) {
         imageNode.parent().replaceWith(imageNode);
@@ -846,9 +846,9 @@ ZSSEditor.markImageUploadDone = function(imageNodeIdentifier) {
  */
 ZSSEditor.sendImageReplacedCallback = function( imageNodeIdentifier ) {
     var arguments = ['id=' + encodeURIComponent( imageNodeIdentifier )];
-    
+
     var joinedArguments = arguments.join( defaultCallbackSeparator );
-    
+
     this.callback("callback-image-replaced", joinedArguments);
 };
 
@@ -863,16 +863,16 @@ ZSSEditor.markImageUploadFailed = function(imageNodeIdentifier, message) {
     if (imageNode.length == 0){
         return;
     }
-    
+
     var sizeClass = '';
     if ( imageNode[0].width > 480 && imageNode[0].height > 240 ) {
         sizeClass = "largeFail";
     } else if ( imageNode[0].width < 100 || imageNode[0].height < 100 ) {
         sizeClass = "smallFail";
     }
-    
+
     imageNode.addClass('failed');
-    
+
     var imageContainerNode = this.getImageContainerNodeWithIdentifier(imageNodeIdentifier);
     if(imageContainerNode.length != 0){
         imageContainerNode.attr("data-failed", message);
@@ -880,7 +880,7 @@ ZSSEditor.markImageUploadFailed = function(imageNodeIdentifier, message) {
         imageContainerNode.addClass('failed');
         imageContainerNode.addClass(sizeClass);
     }
-    
+
     var imageProgressNode = this.getImageProgressNodeWithIdentifier(imageNodeIdentifier);
     if (imageProgressNode.length != 0){
         imageProgressNode.addClass('failed');
@@ -897,13 +897,13 @@ ZSSEditor.unmarkImageUploadFailed = function(imageNodeIdentifier, message) {
     if (imageNode.length != 0){
         imageNode.removeClass('failed');
     }
-    
+
     var imageContainerNode = this.getImageContainerNodeWithIdentifier(imageNodeIdentifier);
     if(imageContainerNode.length != 0){
         imageContainerNode.removeAttr("data-failed");
         imageContainerNode.removeClass('failed');
     }
-    
+
     var imageProgressNode = this.getImageProgressNodeWithIdentifier(imageNodeIdentifier);
     if (imageProgressNode.length != 0){
         imageProgressNode.removeClass('failed');
@@ -920,7 +920,7 @@ ZSSEditor.removeImage = function(imageNodeIdentifier) {
     if (imageNode.length != 0){
         imageNode.remove();
     }
-    
+
     // if image is inside options container we need to remove the container
     var imageContainerNode = this.getImageContainerNodeWithIdentifier(imageNodeIdentifier);
     if (imageContainerNode.length != 0){
@@ -938,10 +938,10 @@ ZSSEditor.updateCurrentImageMeta = function( imageMetaString ) {
     if ( !ZSSEditor.currentEditingImage ) {
         return;
     }
-    
+
     var imageMeta = JSON.parse( imageMetaString );
     var html = ZSSEditor.createImageFromMeta( imageMeta );
-    
+
     // Insert the updated html and remove the outdated node.
     // This approach is preferred to selecting the current node via a range,
     // and then replacing it when calling insertHTML. The insertHTML call can,
@@ -950,18 +950,18 @@ ZSSEditor.updateCurrentImageMeta = function( imageMetaString ) {
     var node = ZSSEditor.findImageCaptionNode( ZSSEditor.currentEditingImage );
     node.insertAdjacentHTML( 'afterend', html );
     node.remove();
-    
+
     ZSSEditor.currentEditingImage = null;
 }
 
 ZSSEditor.applyImageSelectionFormatting = function( imageNode ) {
     var node = ZSSEditor.findImageCaptionNode( imageNode );
-    
+
     var sizeClass = "";
     if ( imageNode.width < 100 || imageNode.height < 100 ) {
         sizeClass = " small";
     }
-    
+
     var overlay = '<span class="edit-overlay"><span class="edit-content">Edit</span></span>';
     var html = '<span class="edit-container' + sizeClass + '">' + overlay + '</span>';
    	node.insertAdjacentHTML( 'beforebegin', html );
@@ -974,7 +974,7 @@ ZSSEditor.removeImageSelectionFormatting = function( imageNode ) {
     if ( !node.parentNode || node.parentNode.className.indexOf( "edit-container" ) == -1 ) {
         return;
     }
-    
+
     var parentNode = node.parentNode;
     var container = parentNode.parentNode;
     container.insertBefore( node, parentNode );
@@ -984,16 +984,16 @@ ZSSEditor.removeImageSelectionFormatting = function( imageNode ) {
 ZSSEditor.removeImageSelectionFormattingFromHTML = function( html ) {
     var tmp = document.createElement( "div" );
     var tmpDom = $( tmp ).html( html );
-    
+
     var matches = tmpDom.find( "span.edit-container img" );
     if ( matches.length == 0 ) {
         return html;
     }
-    
+
     for ( var i = 0; i < matches.length; i++ ) {
         ZSSEditor.removeImageSelectionFormatting( matches[i] );
     }
-    
+
     return tmpDom.html();
 }
 
@@ -1007,15 +1007,15 @@ ZSSEditor.findImageCaptionNode = function( imageNode ) {
     if ( node.parentNode && node.parentNode.nodeName === 'A' ) {
         node = node.parentNode;
     }
-    
+
     if ( node.parentNode && node.parentNode.className.indexOf( 'wp-caption' ) != -1 ) {
         node = node.parentNode;
     }
-    
+
     if ( node.parentNode && (node.parentNode.className.indexOf( 'wp-temp' ) != -1 ) ) {
         node = node.parentNode;
     }
-    
+
     return node;
 }
 
@@ -1032,37 +1032,37 @@ ZSSEditor.findImageCaptionNode = function( imageNode ) {
 ZSSEditor.createImageFromMeta = function( props ) {
     var img = {},
     options, classes, shortcode, html;
-    
+
     classes = props.classes || [];
     if ( ! ( classes instanceof Array ) ) {
         classes = classes.split( ' ' );
     }
-    
+
     _.extend( img, _.pick( props, 'width', 'height', 'alt', 'src', 'title' ) );
-    
+
     // Only assign the align class to the image if we're not printing
     // a caption, since the alignment is sent to the shortcode.
     if ( props.align && ! props.caption ) {
         classes.push( 'align' + props.align );
     }
-    
+
     if ( props.size ) {
         classes.push( 'size-' + props.size );
     }
-    
+
     if ( props.attachment_id ) {
         classes.push( 'wp-image-' + props.attachment_id );
     }
-    
+
     img['class'] = _.compact( classes ).join(' ');
-    
+
     // Generate `img` tag options.
     options = {
     tag:    'img',
     attrs:  img,
     single: true
     };
-    
+
     // Generate the `a` element options, if they exist.
     if ( props.linkUrl ) {
         options = {
@@ -1072,53 +1072,53 @@ ZSSEditor.createImageFromMeta = function( props ) {
         },
         content: options
         };
-        
+
         if ( props.linkClassName ) {
             options.attrs.class = props.linkClassName;
         }
-        
+
         if ( props.linkRel ) {
             options.attrs.rel = props.linkRel;
         }
-        
+
         if ( props.linkTargetBlank ) { // expects a boolean
             options.attrs.target = "_blank";
         }
     }
-    
+
     html = wp.html.string( options );
-    
+
     // Generate the caption shortcode.
     if ( props.caption ) {
         shortcode = {};
-        
+
         if ( img.width ) {
             shortcode.width = img.width;
         }
-        
+
         if ( props.captionId ) {
             shortcode.id = props.captionId;
         }
-        
+
         if ( props.align ) {
             shortcode.align = 'align' + props.align;
         } else {
             shortcode.align = 'alignnone';
         }
-        
+
         if (props.captionClassName) {
             shortcode.class = props.captionClassName;
         }
-        
+
         html = wp.shortcode.string({
                                    tag:     'caption',
                                    attrs:   shortcode,
                                    content: html + ' ' + props.caption
                                    });
-        
+
         html = ZSSEditor.applyVisualFormatting( html );
     }
-    
+
     return html;
 };
 
@@ -1136,7 +1136,7 @@ ZSSEditor.extractImageMeta = function( imageNode ) {
     var classes, extraClasses, metadata, captionBlock, caption, link, width, height,
     captionClassName = [],
     isIntRegExp = /^\d+$/;
-    
+
     // Default attributes. All values are strings, except linkTargetBlank
     metadata = {
     align: 'none',      // Accepted values: center, left, right or empty string.
@@ -1158,31 +1158,31 @@ ZSSEditor.extractImageMeta = function( imageNode ) {
     naturalWidth:'',    // The natural width of the image.
     naturalHeight:''    // The natural height of the image.
     };
-    
+
     // populate metadata with values of matched attributes
     metadata.src = $( imageNode ).attr( 'src' ) || '';
     metadata.alt = $( imageNode ).attr( 'alt' ) || '';
     metadata.title = $( imageNode ).attr( 'title' ) || '';
     metadata.naturalWidth = imageNode.naturalWidth;
     metadata.naturalHeight = imageNode.naturalHeight;
-    
+
     width = $(imageNode).attr( 'width' );
     height = $(imageNode).attr( 'height' );
-    
+
     if ( ! isIntRegExp.test( width ) || parseInt( width, 10 ) < 1 ) {
         width = imageNode.naturalWidth || imageNode.width;
     }
-    
+
     if ( ! isIntRegExp.test( height ) || parseInt( height, 10 ) < 1 ) {
         height = imageNode.naturalHeight || imageNode.height;
     }
-    
+
     metadata.width = width;
     metadata.height = height;
-    
+
     classes = imageNode.className.split( /\s+/ );
     extraClasses = [];
-    
+
     $.each( classes, function( index, value ) {
            if ( /^wp-image/.test( value ) ) {
            metadata.attachment_id = parseInt( value.replace( 'wp-image-', '' ), 10 );
@@ -1194,13 +1194,13 @@ ZSSEditor.extractImageMeta = function( imageNode ) {
            extraClasses.push( value );
            }
            } );
-    
+
     metadata.classes = extraClasses.join( ' ' );
-    
+
     // Extract caption
     var captionMeta = ZSSEditor.captionMetaForImage( imageNode )
     metadata = $.extend( metadata, captionMeta );
-    
+
     // Extract linkTo
     if ( imageNode.parentNode && imageNode.parentNode.nodeName === 'A' ) {
         link = imageNode.parentNode;
@@ -1209,7 +1209,7 @@ ZSSEditor.extractImageMeta = function( imageNode ) {
         metadata.linkTargetBlank = $( link ).attr( 'target' ) === '_blank' ? true : false;
         metadata.linkUrl = $( link ).attr( 'href' ) || '';
     }
-    
+
     return metadata;
 };
 
@@ -1223,15 +1223,15 @@ ZSSEditor.extractImageMeta = function( imageNode ) {
  */
 ZSSEditor.getCaptionForImage = function( imageNode ) {
     var node = ZSSEditor.findImageCaptionNode( imageNode );
-    
+
     // Ensure we're working with the formatted caption
     if ( node.className.indexOf( 'wp-temp' ) == -1 ) {
         return;
     }
-    
+
     var html = node.outerHTML;
     html = ZSSEditor.removeVisualFormatting( html );
-    
+
     return wp.shortcode.next( "caption", html, 0 );
 };
 
@@ -1251,12 +1251,12 @@ ZSSEditor.captionMetaForImage = function( imageNode ) {
     captionClassName: '',
     captionId: ''
     };
-    
+
     var caption = ZSSEditor.getCaptionForImage( imageNode );
     if ( !caption ) {
         return meta;
     }
-    
+
     attrs = caption.shortcode.attrs.named;
     if ( attrs.align ) {
         meta.align = attrs.align.replace( 'align', '' );
@@ -1268,7 +1268,7 @@ ZSSEditor.captionMetaForImage = function( imageNode ) {
         meta.captionId = attrs.id;
     }
     meta.caption = caption.shortcode.content.substr( caption.shortcode.content.lastIndexOf( ">" ) + 1 );
-    
+
     return meta;
 }
 
@@ -1286,19 +1286,19 @@ ZSSEditor.applyCaptionFormatting = function( match ) {
     // of the content body when `-webkit-user-select: none` is set and the caption is tapped.
     var out = '<label class="wp-temp" data-wp-temp="caption" contenteditable="false" onclick="">';
     out += '<span class="wp-caption"';
-    
+
     if ( attrs.width ) {
         out += ' style="width:' + attrs.width + 'px; max-width:100% !important;"';
     }
     $.each( attrs, function( key, value ) {
            out += " data-caption-" + key + '="' + value + '"';
            } );
-    
+
     out += '>';
     out += match.content;
     out += '</span>';
     out += '</label>';
-    
+
     return out;
 }
 
@@ -1312,69 +1312,69 @@ ZSSEditor.applyCaptionFormatting = function( match ) {
 ZSSEditor.removeCaptionFormatting = function( html ) {
     // call methods to restore any transformed content from its visual presentation to its source code.
     var regex = /<label class="wp-temp" data-wp-temp="caption"[^>]*>([\s\S]+?)<\/label>/g;
-    
+
     var str = html.replace( regex, ZSSEditor.removeCaptionFormattingCallback );
-    
+
     return str;
 }
 
 ZSSEditor.removeCaptionFormattingCallback = function( match, content ) {
     // TODO: check is a visual temp node
     var out = '';
-    
+
     if ( content.indexOf('<img ') === -1 ) {
         // Broken caption. The user managed to drag the image out?
         // Try to return the caption text as a paragraph.
         out = content.match( /\s*<span [^>]*>([\s\S]+?)<\/span>/gi );
-        
+
         if ( out && out[1] ) {
             return '<p>' + out[1] + '</p>';
         }
-        
+
         return '';
     }
-    
+
     out = content.replace( /\s*<span ([^>]*)>([\s\S]+?)<\/span>/gi, function( ignoreMatch, attrStr, content ) {
                           if ( ! content ) {
                           return '';
                           }
-                          
+
                           var id, classes, align, width, attrs = {};
-                          
+
                           width = attrStr.match( /data-caption-width="([0-9]*)"/ );
                           width = ( width && width[1] ) ? width[1] : '';
                           if ( width ) {
                           attrs.width = width;
                           }
-                          
+
                           id = attrStr.match( /data-caption-id="([^"]*)"/ );
                           id = ( id && id[1] ) ? id[1] : '';
                           if ( id ) {
                           attrs.id = id;
                           }
-                          
+
                           classes = attrStr.match( /data-caption-class="([^"]*)"/ );
                           classes = ( classes && classes[1] ) ? classes[1] : '';
                           if ( classes ) {
                           attrs.class = classes;
                           }
-                          
+
                           align = attrStr.match( /data-caption-align="([^"]*)"/ );
                           align = ( align && align[1] ) ? align[1] : '';
                           if ( align ) {
                           attrs.align = align;
                           }
-                          
+
                           var options = {
                           'tag':'caption',
                           'attrs':attrs,
                           'type':'closed',
                           'content':content
                           };
-                          
+
                           return wp.shortcode.string( options );
                           });
-    
+
     return out;
 }
 
@@ -1389,7 +1389,7 @@ ZSSEditor.removeCaptionFormattingCallback = function( match, content ) {
  */
 ZSSEditor.applyVisualFormatting  = function( html ) {
     var str = wp.shortcode.replace( 'caption', html, ZSSEditor.applyCaptionFormatting );
-    
+
     return str;
 }
 
@@ -1417,31 +1417,31 @@ ZSSEditor.isCommandEnabled = function(commandName) {
 };
 
 ZSSEditor.sendEnabledStyles = function(e) {
-    
+
     var items = [];
-    
+
     var focusedField = this.getFocusedField();
-    
+
     if (!focusedField.hasNoStyle) {
         // Find all relevant parent tags
         var parentTags = ZSSEditor.parentTags();
-        
+
         for (var i = 0; i < parentTags.length; i++) {
             var currentNode = parentTags[i];
-            
+
             if (currentNode.nodeName.toLowerCase() == 'a') {
                 ZSSEditor.currentEditingLink = currentNode;
-                
+
                 var title = encodeURIComponent(currentNode.text);
                 var href = encodeURIComponent(currentNode.href);
-                
+
                 items.push('link-title:' + title);
                 items.push('link:' + href);
             } else if (currentNode.nodeName.toLowerCase() == 'blockquote') {
                 items.push('blockquote');
             }
         }
-        
+
         if (ZSSEditor.isCommandEnabled('bold')) {
             items.push('bold');
         }
@@ -1462,7 +1462,7 @@ ZSSEditor.sendEnabledStyles = function(e) {
         }
         if (ZSSEditor.isCommandEnabled('underline')) {
             var isUnderlined = false;
-            
+
             // DRM: 'underline' gets highlighted if it's inside of a link... so we need a special test
             // in that case.
             if (!ZSSEditor.currentEditingLink) {
@@ -1494,14 +1494,14 @@ ZSSEditor.sendEnabledStyles = function(e) {
         if (formatBlock.length > 0) {
             items.push(formatBlock);
         }
-        
+
         // Use jQuery to figure out those that are not supported
         if (typeof(e) != "undefined") {
-            
+
             // The target element
             var t = $(e.target);
             var nodeName = e.target.nodeName.toLowerCase();
-            
+
             // Background Color
             try
             {
@@ -1515,7 +1515,7 @@ ZSSEditor.sendEnabledStyles = function(e) {
                 // DRM: I had to add these stupid try-catch blocks to solve an issue with t.css throwing
                 // exceptions for no reason.
             }
-            
+
             // Text Color
             try
             {
@@ -1529,7 +1529,7 @@ ZSSEditor.sendEnabledStyles = function(e) {
                 // DRM: I had to add these stupid try-catch blocks to solve an issue with t.css throwing
                 // exceptions for no reason.
             }
-            
+
             // Image
             if (nodeName == 'img') {
                 ZSSEditor.currentEditingImage = t;
@@ -1540,7 +1540,7 @@ ZSSEditor.sendEnabledStyles = function(e) {
             }
         }
     }
-    
+
     ZSSEditor.stylesCallback(items);
 };
 
@@ -1565,101 +1565,101 @@ ZSSEditor.insertBreakTagAtCaretPosition = function() {
 // MARK: - Parent nodes & tags
 
 ZSSEditor.closerParentNode = function() {
-    
+
     var parentNode = null;
     var selection = window.getSelection();
     var range = selection.getRangeAt(0).cloneRange();
-    
+
     var currentNode = range.commonAncestorContainer;
-    
+
     while (currentNode) {
         if (currentNode.nodeType == document.ELEMENT_NODE) {
             parentNode = currentNode;
-            
+
             break;
         }
-        
+
         currentNode = currentNode.parentElement;
     }
-    
+
     return parentNode;
 };
 
 ZSSEditor.closerParentNodeStartingAtNode = function(nodeName, startingNode) {
-    
+
     nodeName = nodeName.toLowerCase();
-    
+
     var parentNode = null;
     var currentNode = startingNode,parentElement;
-    
+
     while (currentNode) {
-        
+
         if (currentNode.nodeName == document.body.nodeName) {
             break;
         }
-        
+
         if (currentNode.nodeName.toLowerCase() == nodeName
             && currentNode.nodeType == document.ELEMENT_NODE) {
             parentNode = currentNode;
-            
+
             break;
         }
-        
+
         currentNode = currentNode.parentElement;
     }
-    
+
     return parentNode;
 };
 
 ZSSEditor.closerParentNodeWithName = function(nodeName) {
-    
+
     nodeName = nodeName.toLowerCase();
-    
+
     var parentNode = null;
     var selection = window.getSelection();
     var range = selection.getRangeAt(0).cloneRange();
-    
+
     var currentNode = range.commonAncestorContainer;
-    
+
     while (currentNode) {
-        
+
         if (currentNode.nodeName == document.body.nodeName) {
             break;
         }
-        
+
         if (currentNode.nodeName.toLowerCase() == nodeName
             && currentNode.nodeType == document.ELEMENT_NODE) {
             parentNode = currentNode;
-            
+
             break;
         }
-        
+
         currentNode = currentNode.parentElement;
     }
-    
+
     return parentNode;
 };
 
 ZSSEditor.parentTags = function() {
-    
+
     var parentTags = [];
     var selection = window.getSelection();
     var range = selection.getRangeAt(0);
-    
+
     var currentNode = range.commonAncestorContainer;
     while (currentNode) {
-        
+
         if (currentNode.nodeName == document.body.nodeName) {
             break;
         }
-        
+
         if (currentNode.nodeType == document.ELEMENT_NODE) {
             parentTags.push(currentNode);
         }
-        
+
         currentNode = currentNode.parentElement;
     }
-    
+
     return parentTags;
 };
 
@@ -1669,18 +1669,18 @@ function ZSSField(wrappedObject) {
     // When this bool is true, we are going to restrict input and certain callbacks
     // so IME keyboards behave properly when composing.
     this.isComposing = false;
-    
+
     this.multiline = false;
     this.wrappedObject = wrappedObject;
     this.bodyPlaceholderColor = '#000000';
     this.bodyCSS = 'color:black';
-    
+
     if (this.wrappedDomNode().hasAttribute('nostyle')) {
         this.hasNoStyle = true;
     }
-    
+
     this.useVisualFormatting = (this.wrappedObject.data("wpUseVisualFormatting") === "true")
-    
+
     this.bindListeners();
 };
 
@@ -1699,10 +1699,10 @@ $.fn.pasteEvents = function (delay) {
 
 //The cool plugin
 $.fn.pasteFilter = function (paste_modifier) {
-    
+
     var oldValue;
     var diff = new diff_match_patch();
-    
+
     return $(this).each(function () {
                         var $el = $(this);
                         $el.bind("prepaste", function (e) {
@@ -1722,9 +1722,9 @@ $.fn.pasteFilter = function (paste_modifier) {
 };
 
 ZSSField.prototype.bindListeners = function() {
-    
+
     var thisObj = this;
-    
+
     this.wrappedObject.bind('tap', function(e) { thisObj.handleTapEvent(e); });
     this.wrappedObject.bind('focus', function(e) { thisObj.handleFocusEvent(e); });
     this.wrappedObject.bind('blur', function(e) { thisObj.handleBlurEvent(e); });
@@ -1732,16 +1732,16 @@ ZSSField.prototype.bindListeners = function() {
     this.wrappedObject.bind('input', function(e) { thisObj.handleInputEvent(e); });
     this.wrappedObject.bind('compositionstart', function(e) { thisObj.handleCompositionStartEvent(e); });
     this.wrappedObject.bind('compositionend', function(e) { thisObj.handleCompositionEndEvent(e); });
-    
-    
+
+
     this.wrappedObject.bind('paste', function(e) {
             var data = e.originalEvent.clipboardData.getData('Text');
-            
+
             var re = /(https?:\/\/(([-\w\.]+)+(:\d+)?(\/([\w/_\.]*(\?\S+)?)?)?))/g;
             data = data.replace(re, "<a href=\"$1\" title=\"\">$1</a>");
-            
+
             var sel = document.getSelection();
-            
+
             if (sel.rangeCount) {
                 ZSSEditor.restoreRange();
                 e.preventDefault();
@@ -1755,7 +1755,7 @@ ZSSField.prototype.bindListeners = function() {
                 ZSSEditor.restoreRange();
                 ZSSEditor.sendEnabledStyles();
             }else{
-            
+
             }
     });
 
@@ -1769,16 +1769,16 @@ ZSSField.prototype.bindListeners = function() {
  *  @details    If the node contains child image nodes, then the content is left untouched.
  */
 ZSSField.prototype.emptyFieldIfNoContents = function() {
-    
+
     var nbsp = '\xa0';
     var text = this.wrappedObject.text().replace(nbsp, '');
-    
+
     if (text.length == 0) {
-        
+
         var hasChildImages = (this.wrappedObject.find('img').length > 0);
         var hasUnorderedList = (this.wrappedObject.find('ul').length > 0);
         var hasOrderedList = (this.wrappedObject.find('ol').length > 0);
-        
+
         if (!hasChildImages && !hasUnorderedList && !hasOrderedList) {
             this.wrappedObject.empty();
         }
@@ -1794,9 +1794,9 @@ ZSSField.prototype.emptyFieldIfNoContentsAndRefreshPlaceholderColor = function()
 
 ZSSField.prototype.handleBlurEvent = function(e) {
     ZSSEditor.focusedField = null;
-    
+
     this.emptyFieldIfNoContentsAndRefreshPlaceholderColor();
-    
+
     this.callback("callback-focus-out");
 };
 
@@ -1804,19 +1804,19 @@ ZSSField.prototype.handleFocusEvent = function(e) {
     ZSSEditor.focusedField = this;
     //alert(this.wrappedObject.text());
 
-    
+
     // IMPORTANT: this is the only case where checking the current focus will not work.
     // We sidestep this issue by indicating that the field is about to gain focus.
     //
     this.refreshPlaceholderColorAboutToGainFocus(true);
     this.callback("callback-focus-in");
-  
+
 };
 
 ZSSField.prototype.handleKeyDownEvent = function(e) {
-    
+
     var wasEnterPressed = (e.keyCode == '13');
-    
+
     if (this.isComposing) {
         e.stopPropagation();
     } else if (wasEnterPressed) {
@@ -1831,17 +1831,17 @@ ZSSField.prototype.handleKeyDownEvent = function(e) {
 
 
 ZSSField.prototype.handleInputEvent = function(e) {
-    
+
     // Skip this if we are composing on an IME keyboard
     if (this.isComposing ) { return; }
-    
+
     // IMPORTANT: we want the placeholder to come up if there's no text, so we clear the field if
     // there's no real content in it.  It's important to do this here and not on keyDown or keyUp
     // as the field could become empty because of a cut or paste operation as well as a key press.
     // This event takes care of all cases.
     //
     this.emptyFieldIfNoContentsAndRefreshPlaceholderColor();
-    
+
     var joinedArguments = ZSSEditor.getJoinedFocusedFieldIdAndCaretArguments();
     ZSSEditor.callback('callback-selection-changed', joinedArguments);
     this.callback("callback-input", joinedArguments);
@@ -1857,62 +1857,62 @@ ZSSField.prototype.handleCompositionEndEvent = function(e) {
 
 ZSSField.prototype.handleTapEvent = function(e) {
     var targetNode = e.target;
-    
+
     if (targetNode) {
-        
+
         ZSSEditor.lastTappedNode = targetNode;
-        
+
         if (targetNode.nodeName.toLowerCase() == 'a') {
             var arguments = ['url=' + encodeURIComponent(targetNode.href),
                              'title=' + encodeURIComponent(targetNode.innerHTML)];
-            
+
             var joinedArguments = arguments.join(defaultCallbackSeparator);
-            
+
             var thisObj = this;
-            
+
             // WORKAROUND: force the event to become sort of "after-tap" through setTimeout()
             //
             setTimeout(function() { thisObj.callback('callback-link-tap', joinedArguments);}, 500);
         }
-        
+
         if (targetNode.nodeName.toLowerCase() == 'img') {
             // If the image is uploading, or is a local image do not select it.
             if ( targetNode.dataset.wpid ) {
                 this.sendImageTappedCallback( targetNode );
                 return;
             }
-            
+
             // If we're not currently editing just return. No need to apply styles
             // or acknowledge the tap
             if ( this.wrappedObject.attr('contenteditable') != "true" ) {
                 return;
             }
-            
+
             // Is the tapped image the image we're editing?
             if ( targetNode == ZSSEditor.currentEditingImage ) {
                 ZSSEditor.removeImageSelectionFormatting( targetNode );
                 this.sendImageTappedCallback( targetNode );
                 return;
             }
-            
+
             // If there is a selected image, deselect it. A different image was tapped.
             if ( ZSSEditor.currentEditingImage ) {
                 ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
             }
-            
+
             // Format and flag the image as selected.
             ZSSEditor.currentEditingImage = targetNode;
             ZSSEditor.applyImageSelectionFormatting( targetNode );
-            
+
             return;
         }
-        
+
         if (targetNode.className.indexOf('edit-overlay') != -1 || targetNode.className.indexOf('edit-content') != -1) {
             ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
             this.sendImageTappedCallback( ZSSEditor.currentEditingImage );
             return;
         }
-        
+
         if ( ZSSEditor.currentEditingImage ) {
             ZSSEditor.removeImageSelectionFormatting( ZSSEditor.currentEditingImage );
             ZSSEditor.currentEditingImage = null;
@@ -1929,11 +1929,11 @@ ZSSField.prototype.sendImageTappedCallback = function( imageNode ) {
     var arguments = ['id=' + encodeURIComponent( imageId ),
                      'url=' + encodeURIComponent( imageNode.src ),
                      'meta=' + encodeURIComponent( meta )];
-    
+
     var joinedArguments = arguments.join( defaultCallbackSeparator );
-    
+
     var thisObj = this;
-    
+
     // WORKAROUND: force the event to become sort of "after-tap" through setTimeout()
     //
     setTimeout(function() { thisObj.callback('callback-image-tap', joinedArguments);}, 500);
@@ -1942,15 +1942,15 @@ ZSSField.prototype.sendImageTappedCallback = function( imageNode ) {
 // MARK: - Callback Execution
 
 ZSSField.prototype.callback = function(callbackScheme, callbackPath) {
-    
+
     var url = callbackScheme + ":";
-    
+
     url = url + "id=" + this.getNodeId();
-    
+
     if (callbackPath) {
         url = url + defaultCallbackSeparator + callbackPath;
     }
-    
+
     if (isUsingiOS) {
         ZSSEditor.callbackThroughIFrame(url);
     } else {
@@ -1961,13 +1961,13 @@ ZSSField.prototype.callback = function(callbackScheme, callbackPath) {
 // MARK: - Focus
 
 ZSSField.prototype.isFocused = function() {
-    
+
     return this.wrappedObject.is(':focus');
 };
 
 $.fn.selectRange = function(start, end) {
     this.focus();
-    
+
     if(!end) end = start;
     return this.each(function() {
                      if (this.setSelectionRange) {
@@ -1984,7 +1984,7 @@ $.fn.selectRange = function(start, end) {
 };
 
 ZSSField.prototype.focus = function() {
-    
+
     if (!this.isFocused()) {
         this.wrappedObject.focus();
         //this.wrappedObject.selectRange(3); // set cursor position
@@ -1992,7 +1992,7 @@ ZSSField.prototype.focus = function() {
 //        var ele =  this.wrappedObject;
 //        var v= this.wrappedObject.text();
 //        this.wrappedObject.text('A');
-//    
+//
 //        setTimeout(function() {
 //                   ele.text("MILAN");
 //                   }, 1000);
@@ -2024,9 +2024,9 @@ ZSSField.prototype.getNodeId = function() {
 // MARK: - Editing
 
 ZSSField.prototype.enableEditing = function () {
-    
+
     this.wrappedObject.attr('contenteditable', true);
-    
+
     if (!ZSSEditor.focusedField) {
        // ZSSEditor.focusFirstEditableField();
     }
@@ -2038,7 +2038,7 @@ ZSSField.prototype.disableEditing = function () {
     // removed from the screen.
     //
     this.blur();
-    
+
     this.wrappedObject.attr('contenteditable', false);
 };
 
@@ -2061,14 +2061,21 @@ ZSSField.prototype.enableRightToLeftText = function(isRTL) {
 ZSSField.prototype.isEmpty = function() {
     var html = this.getHTML();
     var isEmpty = (html.length == 0 || html == "<br>");
-    
+
     return isEmpty;
 };
 
 ZSSField.prototype.getHTML = function() {
-    var html = wp.saveText(this.wrappedObject.html());
-    html = ZSSEditor.removeVisualFormatting( html );
-    return html
+    // TODO Remove?
+    // wp.saveText (see wpsave.js) is too eager with cleaning the raw HTML (e.g. messes up new lines)
+    // so best to just return raw HTML, which should not be too much of a problem,
+    // iOS app can always clean up the HTML itself if it needs to, but at least it has more control over it.
+    //
+    // var html = wp.saveText(this.wrappedObject.html());
+    // html = ZSSEditor.removeVisualFormatting( html );
+    // return html
+
+    return this.wrappedObject.html()
 };
 
 ZSSField.prototype.strippedHTML = function() {
@@ -2096,7 +2103,7 @@ ZSSField.prototype.hasPlaceholderText = function() {
 };
 
 ZSSField.prototype.setPlaceholderText = function(placeholder) {
-    
+
     this.wrappedObject.attr('placeholderText', placeholder);
 };
 
@@ -2129,9 +2136,9 @@ ZSSEditor.setBodyCss = function(css) {
 };
 
 ZSSField.prototype.refreshPlaceholderColorForAttributes = function(hasPlaceholderText, isFocused, isEmpty) {
-    
+
     var shouldColorText = hasPlaceholderText && isEmpty;
-    
+
     if (shouldColorText) {
         if (isFocused) {
             this.wrappedObject.css('color', this.bodyPlaceholderColor);
@@ -2141,7 +2148,7 @@ ZSSField.prototype.refreshPlaceholderColorForAttributes = function(hasPlaceholde
     }else{
         this.wrappedObject.attr('style', ZSSEditor.newCSS);
     }
-    
+
 };
 
 // MARK: - Wrapped Object
