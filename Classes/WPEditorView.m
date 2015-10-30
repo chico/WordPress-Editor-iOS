@@ -79,23 +79,23 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
 - (instancetype)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
-	
+
 	if (self) {
 		CGRect childFrame = frame;
 		childFrame.origin = CGPointZero;
-		
+
         //[self createSourceTitleViewWithFrame: childFrame];
         //[self createSourceDividerViewWithFrame:CGRectMake(0.0f, CGRectGetMaxY(self.sourceViewTitleField.frame), CGRectGetWidth(childFrame), 1.0f)];
 //        CGRect sourceViewFrame = CGRectMake(0.0f,
 //                                            CGRectGetMaxY(self.sourceContentDividerView.frame),
 //                                            CGRectGetWidth(childFrame),
 //                                            CGRectGetHeight(childFrame)-CGRectGetHeight(self.sourceViewTitleField.frame)-CGRectGetHeight(self.sourceContentDividerView.frame));
-//        
+//
 //        [self createSourceViewWithFrame:sourceViewFrame];
 		[self createWebViewWithFrame:childFrame];
 		[self setupHTMLEditor];
 	}
-	
+
 	return self;
 }
 
@@ -112,8 +112,8 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
 
 - (void)createSourceTitleViewWithFrame:(CGRect)frame
 {
-    NSAssert(!_sourceViewTitleField, @"The source view title field must not exist when this method is called!");	
-    
+    NSAssert(!_sourceViewTitleField, @"The source view title field must not exist when this method is called!");
+
     if (IS_IPAD) {
         CGFloat textWidth = CGRectGetWidth(frame) - (2 * iPadUITextFieldLeftRightInset);
         _sourceViewTitleField = [[UITextField alloc] initWithFrame:CGRectMake(iPadUITextFieldLeftRightInset, 5.0f, textWidth, UITextFieldFieldHeight)];
@@ -121,7 +121,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
         CGFloat textWidth = CGRectGetWidth(frame) - (2 * UITextFieldLeftRightInset);
         _sourceViewTitleField = [[UITextField alloc] initWithFrame:CGRectMake(UITextFieldLeftRightInset, 5.0f, textWidth, UITextFieldFieldHeight)];
     }
-    
+
     _sourceViewTitleField.hidden = YES;
     _sourceViewTitleField.font = [WPFontManager merriweatherBoldFontOfSize:18.0f];
     _sourceViewTitleField.autocapitalizationType = UITextAutocapitalizationTypeWords;
@@ -136,7 +136,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
 - (void)createSourceDividerViewWithFrame:(CGRect)frame
 {
     NSAssert(!_sourceContentDividerView, @"The source divider view must not exist when this method is called!");
-    
+
     if (IS_IPAD) {
         CGFloat lineWidth = CGRectGetWidth(frame) - (2 * iPadUITextFieldLeftRightInset);
         _sourceContentDividerView = [[UIView alloc] initWithFrame:CGRectMake(iPadUITextFieldLeftRightInset, CGRectGetMaxY(frame), lineWidth, CGRectGetHeight(frame))];
@@ -154,7 +154,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
 - (void)createSourceViewWithFrame:(CGRect)frame
 {
     NSAssert(!_sourceView, @"The source view must not exist when this method is called!");
-    
+
     _sourceView = [[ZSSTextView alloc] initWithFrame:frame];
     _sourceView.autocapitalizationType = UITextAutocapitalizationTypeWords;
     _sourceView.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -172,7 +172,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
 - (void)createWebViewWithFrame:(CGRect)frame
 {
 	NSAssert(!_webView, @"The web view must not exist when this method is called!");
-	
+
 	_webView = [[UIWebView alloc] initWithFrame:frame];
 	_webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	_webView.delegate = self;
@@ -184,23 +184,23 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
     _webView.usesGUIFixes = YES;
     _webView.keyboardDisplayRequiresUserAction = NO;
     _webView.scrollView.bounces = YES;
-    
+
     [self startObservingWebViewContentSizeChanges];
-    
+
 	[self addSubview:_webView];
 }
 
 - (void)setupHTMLEditor
 {
 	_editorInteractionQueue = [[NSOperationQueue alloc] init];
-	
+
 	__block NSString* htmlEditor = nil;
 	__weak typeof(self) weakSelf = self;
-	
+
 	NSBlockOperation* loadEditorOperation = [NSBlockOperation blockOperationWithBlock:^{
 		htmlEditor = [self editorHTML];
 	}];
-	
+
     NSBlockOperation* editorDidLoadOperation = [NSBlockOperation blockOperationWithBlock:^{
         __strong typeof(weakSelf) strongSelf = weakSelf;
 
@@ -208,12 +208,12 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
             [strongSelf.webView loadHTMLString:htmlEditor baseURL:nil];
         }
     }];
-	
+
 	[loadEditorOperation setCompletionBlock:^{
-		
+
 		[[NSOperationQueue mainQueue] addOperation:editorDidLoadOperation];
 	}];
-	
+
 	[_editorInteractionQueue addOperation:loadEditorOperation];
 }
 
@@ -222,7 +222,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"editor" ofType:@"html"];
     NSData *fileContentData = [NSData dataWithContentsOfFile:filePath];
     NSString *fileContentString = [[NSString alloc] initWithData:fileContentData encoding:NSUTF8StringEncoding];
-    
+
     return fileContentString;
 }
 
@@ -291,19 +291,19 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
     // Ref bug: https://github.com/wordpress-mobile/WordPress-iOS-Editor/issues/324
     //
     if (object == self.webView.scrollView) {
-        
+
         if ([keyPath isEqualToString:WPEditorViewWebViewContentSizeKey]) {
             NSValue *newValue = change[NSKeyValueChangeNewKey];
-            
+
             CGSize newSize = [newValue CGSizeValue];
-        
+
             if (newSize.height != self.lastEditorHeight) {
-                
+
                 // First make sure that the content size is not changed without us recalculating it.
                 //
                 self.webView.scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.frame), self.lastEditorHeight);
                 [self workaroundBrokenWebViewRendererBug];
-                
+
                 // Then recalculate it asynchronously so the UIWebView doesn't break.
                 //
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -337,10 +337,10 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
 - (void)redrawWebView
 {
     NSArray *views = self.webView.scrollView.subviews;
-    
+
     for(int i = 0; i< views.count; i++){
         UIView *view = views[i];
-        
+
         [view setNeedsDisplay];
     }
 }
@@ -368,7 +368,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
                                              selector:@selector(keyboardDidShow:)
                                                  name:UIKeyboardDidShowNotification
                                                object:nil];
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
@@ -391,7 +391,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
 - (void)keyboardDidShow:(NSNotification *)notification
 {
     BOOL isiOSVersionEarlierThan8 = [WPDeviceIdentification isiOSVersionEarlierThan8];
-    
+
     if (isiOSVersionEarlierThan8) {
         // PROBLEM: under iOS 7, it seems that setting the proper insets in keyboardWillShow: is not
         // enough.  We were having trouble when adding images, where the keyboard would show but the
@@ -410,7 +410,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
         //
         [self refreshKeyboardInsetsWithShowNotification:notification];
     }
-    
+
     [self scrollToCaretAnimated:NO];
 }
 
@@ -428,7 +428,7 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
     //
     CGFloat vOffset = self.sourceView.inputAccessoryView.frame.size.height;
     UIEdgeInsets insets = UIEdgeInsetsMake(0.0f, 0.0f, vOffset, 0.0f);
-    
+
     self.webView.scrollView.contentInset = insets;
     self.webView.scrollView.scrollIndicatorInsets = insets;
     self.sourceView.contentInset = insets;
@@ -448,19 +448,19 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
 - (void)refreshKeyboardInsetsWithShowNotification:(NSNotification*)notification
 {
     NSParameterAssert([notification isKindOfClass:[NSNotification class]]);
-    
+
     NSDictionary *info = notification.userInfo;
     CGRect keyboardEnd = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    
+
     CGRect localizedKeyboardEnd = [self convertRect:keyboardEnd fromView:nil];
     CGPoint keyboardOrigin = localizedKeyboardEnd.origin;
-    
+
     if (keyboardOrigin.y > 0) {
-        
+
         CGFloat vOffset = CGRectGetHeight(self.frame) - keyboardOrigin.y;
-        
+
         UIEdgeInsets insets = UIEdgeInsetsMake(0.0f, 0.0f, vOffset, 0.0f);
-        
+
         self.webView.scrollView.contentInset = insets;
         self.webView.scrollView.scrollIndicatorInsets = insets;
         self.sourceView.contentInset = insets;
@@ -471,16 +471,23 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
 - (void)refreshVisibleViewportAndContentSize
 {
     [self.webView stringByEvaluatingJavaScriptFromString:@"ZSSEditor.refreshVisibleViewportSize();"];
-    
+
 #ifdef DEBUG
     [self.webView stringByEvaluatingJavaScriptFromString:@"ZSSEditor.logMainElementSizes();"];
 #endif
-    
+
     NSString* newHeightString = [self.webView stringByEvaluatingJavaScriptFromString:@"$(document.body).height();"];
     NSInteger newHeight = [newHeightString integerValue];
-    
+
     self.lastEditorHeight = newHeight;
     self.webView.scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.frame), newHeight);
+}
+
+- (long)contentHeight
+{
+    NSString* newHeightString = [self.webView stringByEvaluatingJavaScriptFromString:@"$('#zss_field_content').height();"];
+    NSInteger newHeight = [newHeightString integerValue];
+    return newHeight;
 }
 
 #pragma mark - UIWebViewDelegate
@@ -490,14 +497,14 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 			navigationType:(UIWebViewNavigationType)navigationType
 {
 	NSURL *url = [request URL];
-    
+
 	BOOL shouldLoad = NO;
-	
+
 	if (navigationType != UIWebViewNavigationTypeLinkClicked) {
 		BOOL handled = [self handleWebViewCallbackURL:url];
 		shouldLoad = !handled;
 	}
-    
+
 	return shouldLoad;
 }
 
@@ -524,9 +531,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 	BOOL handled = NO;
 
 	NSString *scheme = [url scheme];
-	
+
 	DDLogDebug(@"WebEditor callback received: %@", url);
-	
+
     if (scheme) {
         if ([self isFocusInScheme:scheme]) {
             [self handleFocusInCallback:url];
@@ -566,7 +573,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
             handled = YES;
         }
     }
-	
+
 	return handled;
 }
 
@@ -578,12 +585,12 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleDOMLoadedCallback:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     self.editorInteractionQueue = nil;
-    
+
     [self.titleField handleDOMLoaded];
     [self.contentField handleDOMLoaded];
-    
+
     if ([self.delegate respondsToSelector:@selector(editorViewDidFinishLoadingDOM:)]) {
         [self.delegate editorViewDidFinishLoadingDOM:self];
     }
@@ -592,9 +599,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleFocusInCallback:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     static NSString* const kFieldIdParameterName = @"id";
-    
+
     [self parseParametersFromCallbackURL:url
          andExecuteBlockForEachParameter:^(NSString *parameterName, NSString *parameterValue)
      {
@@ -604,7 +611,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
              } else if ([parameterValue isEqualToString:kWPEditorViewFieldContentId]) {
                  self.focusedField = self.contentField;
              }
-             
+
              self.webView.customInputAccessoryView = self.focusedField.inputAccessoryView;
          }
      } onComplete:^{
@@ -620,7 +627,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleFocusOutCallback:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     self.focusedField = nil;
     [self callDelegateFieldFocused:self.focusedField];
 }
@@ -633,14 +640,14 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleInputCallback:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     static NSString* const kFieldIdParameterName = @"id";
     static NSString* const kYOffsetParameterName = @"yOffset";
     static NSString* const kLineHeightParameterName = @"height";
-    
+
     self.caretYOffset = nil;
     self.lineHeight = nil;
-    
+
     [self parseParametersFromCallbackURL:url
          andExecuteBlockForEachParameter:^(NSString *parameterName, NSString *parameterValue)
      {
@@ -650,17 +657,17 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
              } else if ([parameterValue isEqualToString:kWPEditorViewFieldContentId]) {
                  [self callDelegateEditorTextDidChange];
              }
-             
+
              self.webView.customInputAccessoryView = self.focusedField.inputAccessoryView;
          } else if ([parameterName isEqualToString:kYOffsetParameterName]) {
-             
+
              self.caretYOffset = @([parameterValue floatValue]);
          } else if ([parameterName isEqualToString:kLineHeightParameterName]) {
-             
+
              self.lineHeight = @([parameterValue floatValue]);
          }
      } onComplete:^() {
-         
+
          // WORKAROUND: it seems that without this call, typing doesn't always follow the caret
          // position.
          //
@@ -681,13 +688,13 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleLinkTappedCallback:(NSURL*)url
 {
 	NSParameterAssert([url isKindOfClass:[NSURL class]]);
-	
+
 	static NSString* const kTappedUrlParameterName = @"url";
 	static NSString* const kTappedUrlTitleParameterName = @"title";
-	
+
 	__block NSURL* tappedUrl = nil;
 	__block NSString* tappedUrlTitle = nil;
-	
+
 	[self parseParametersFromCallbackURL:url
 		 andExecuteBlockForEachParameter:^(NSString *parameterName, NSString *parameterValue)
 	{
@@ -696,7 +703,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 		} else if ([parameterName isEqualToString:kTappedUrlTitleParameterName]) {
 			tappedUrlTitle = [self stringByDecodingURLFormat:parameterValue];
 		}
-	} onComplete:^{		
+	} onComplete:^{
 		if ([self.delegate respondsToSelector:@selector(editorView:linkTapped:title:)]) {
 			[self.delegate editorView:self linkTapped:tappedUrl title:tappedUrlTitle];
 		}
@@ -711,15 +718,15 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleImageTappedCallback:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     static NSString *const kTappedUrlParameterName = @"url";
     static NSString *const kTappedIdParameterName = @"id";
     static NSString *const kTappedMetaName = @"meta";
-    
+
     __block NSURL *tappedUrl = nil;
     __block NSString *tappedId = nil;
     __block NSString *tappedMeta = nil;
-    
+
     [self parseParametersFromCallbackURL:url
          andExecuteBlockForEachParameter:^(NSString *parameterName, NSString *parameterValue)
      {
@@ -746,11 +753,11 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleImageReplacedCallback:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     static NSString *const kImagedIdParameterName = @"id";
-    
+
     __block NSString *imageId = nil;
-    
+
     [self parseParametersFromCallbackURL:url
          andExecuteBlockForEachParameter:^(NSString *parameterName, NSString *parameterValue)
      {
@@ -772,9 +779,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleLogCallbackScheme:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     static NSString* const kMessageParameterName = @"msg";
-    
+
     [self parseParametersFromCallbackURL:url
          andExecuteBlockForEachParameter:^(NSString *parameterName, NSString *parameterValue)
      {
@@ -792,26 +799,26 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleNewFieldCallback:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     static NSString* const kFieldIdParameterName = @"id";
-    
+
     __block NSString* fieldId = nil;
-    
+
     [self parseParametersFromCallbackURL:url
          andExecuteBlockForEachParameter:^(NSString *parameterName, NSString *parameterValue)
      {
          if ([parameterName isEqualToString:kFieldIdParameterName]) {
              NSAssert([parameterValue isKindOfClass:[NSString class]],
                       @"We're expecting a non-nil NSString object here.");
-             
+
              fieldId = parameterValue;
          }
      } onComplete:^{
-         
+
          if ([fieldId isEqualToString:kWPEditorViewFieldContentId]) {
 
          WPEditorField* newField = [self createFieldWithId:fieldId];
-         
+
          [self callDelegateFieldCreated:newField];
          }
      }];
@@ -825,21 +832,21 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleSelectionChangedCallback:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     static NSString* const kYOffsetParameterName = @"yOffset";
     static NSString* const kLineHeightParameterName = @"height";
-    
+
     self.caretYOffset = nil;
     self.lineHeight = nil;
-    
+
     [self parseParametersFromCallbackURL:url
          andExecuteBlockForEachParameter:^(NSString *parameterName, NSString *parameterValue)
      {
          if ([parameterName isEqualToString:kYOffsetParameterName]) {
-             
+
              self.caretYOffset = @([parameterValue floatValue]);
          } else if ([parameterName isEqualToString:kLineHeightParameterName]) {
-             
+
              self.lineHeight = @([parameterValue floatValue]);
          }
      } onComplete:^() {
@@ -850,9 +857,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)handleSelectionStyleCallback:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     NSString* styles = [[url resourceSpecifier] stringByReplacingOccurrencesOfString:@"//" withString:@""];
-    
+
     [self processStyles:styles];
 }
 
@@ -861,21 +868,21 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (BOOL)isDOMLoadedScheme:(NSString*)scheme
 {
 	static NSString* const kCallbackScheme = @"callback-dom-loaded";
-	
+
 	return [scheme isEqualToString:kCallbackScheme];
 }
 
 - (BOOL)isFocusInScheme:(NSString*)scheme
 {
 	static NSString* const kCallbackScheme = @"callback-focus-in";
-	
+
 	return [scheme isEqualToString:kCallbackScheme];
 }
 
 - (BOOL)isFocusOutScheme:(NSString*)scheme
 {
 	static NSString* const kCallbackScheme = @"callback-focus-out";
-	
+
 	return [scheme isEqualToString:kCallbackScheme];
 }
 
@@ -883,9 +890,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
     NSAssert([scheme isKindOfClass:[NSString class]],
              @"We're expecting a non-nil string object here.");
-    
+
 	static NSString* const kCallbackScheme = @"callback-link-tap";
-	
+
 	return [scheme isEqualToString:kCallbackScheme];
 }
 
@@ -893,9 +900,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
     NSAssert([scheme isKindOfClass:[NSString class]],
              @"We're expecting a non-nil string object here.");
-    
+
     static NSString* const kCallbackScheme = @"callback-image-tap";
-    
+
     return [scheme isEqualToString:kCallbackScheme];
 }
 
@@ -903,9 +910,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
     NSAssert([scheme isKindOfClass:[NSString class]],
              @"We're expecting a non-nil string object here.");
-    
+
     static NSString* const kCallbackScheme = @"callback-image-replaced";
-    
+
     return [scheme isEqualToString:kCallbackScheme];
 }
 
@@ -913,9 +920,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
     NSAssert([scheme isKindOfClass:[NSString class]],
              @"We're expecting a non-nil string object here.");
-    
+
     static NSString* const kCallbackScheme = @"callback-log";
-    
+
     return [scheme isEqualToString:kCallbackScheme];
 }
 
@@ -923,9 +930,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
     NSAssert([scheme isKindOfClass:[NSString class]],
              @"We're expecting a non-nil string object here.");
-    
+
     static NSString* const kCallbackScheme = @"callback-new-field";
-    
+
     return [scheme isEqualToString:kCallbackScheme];
 }
 
@@ -933,9 +940,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
     NSAssert([scheme isKindOfClass:[NSString class]],
              @"We're expecting a non-nil string object here.");
-    
+
     static NSString* const kCallbackScheme = @"callback-selection-changed";
-    
+
     return [scheme isEqualToString:kCallbackScheme];
 }
 
@@ -949,14 +956,14 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (BOOL)isInputCallbackScheme:(NSString*)scheme
 {
 	static NSString* const kCallbackScheme = @"callback-input";
-	
+
 	return [scheme isEqualToString:kCallbackScheme];
 }
 
 - (BOOL)isTitleReturnCallbackScheme:(NSString*)scheme
 {
     static NSString* const kCallbackScheme = @"callback-title-return";
-    
+
     return [scheme isEqualToString:kCallbackScheme];
 }
 
@@ -964,12 +971,12 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
     NSArray *styleStrings = [styles componentsSeparatedByString:kDefaultCallbackParameterSeparator];
     NSMutableArray *itemsModified = [[NSMutableArray alloc] init];
-	
+
 	self.selectedImageURL = nil;
 	self.selectedImageAlt = nil;
 	self.selectedLinkURL = nil;
 	self.selectedLinkTitle = nil;
-	
+
     for (NSString *styleString in styleStrings) {
         NSString *updatedItem = styleString;
         if ([styleString hasPrefix:@"link:"]) {
@@ -985,9 +992,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
         }
         [itemsModified addObject:updatedItem];
     }
-	
+
     styleStrings = [NSArray arrayWithArray:itemsModified];
-    
+
 	if ([self.delegate respondsToSelector:@selector(editorView:stylesForCurrentSelection:)])
 	{
 		[self.delegate editorView:self stylesForCurrentSelection:styleStrings];
@@ -1004,15 +1011,15 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (CGRect)viewport
 {
     UIScrollView* scrollView = self.webView.scrollView;
-    
+
     CGRect viewport;
-    
+
     viewport.origin = scrollView.contentOffset;
     viewport.size = scrollView.bounds.size;
-    
+
     viewport.size.height -= (scrollView.contentInset.top + scrollView.contentInset.bottom);
     viewport.size.width -= (scrollView.contentInset.left + scrollView.contentInset.right);
-    
+
     return viewport;
 }
 
@@ -1029,16 +1036,16 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (NSArray*)componentsFromParameter:(NSString*)parameter
 {
 	NSParameterAssert([parameter isKindOfClass:[NSString class]]);
-    
+
     NSRange range = [parameter rangeOfString:kDefaultCallbackParameterComponentSeparator];
-    
+
     NSString* parameterName = [parameter substringToIndex:range.location];
     NSString* parameterValue = [parameter substringFromIndex:range.location + range.length];
-    
+
     NSArray* components = @[parameterName, parameterValue];
 	NSAssert([components count] == 2,
 			 @"We're expecting exactly two components here.");
-	
+
 	return components;
 }
 
@@ -1057,20 +1064,20 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
 	NSParameterAssert([url isKindOfClass:[NSURL class]]);
 	NSParameterAssert(block);
-	
+
 	NSArray* parameters = [self parametersFromCallbackURL:url];
-	
+
 	for (NSString* parameter in parameters) {
 		NSAssert([parameter isKindOfClass:[NSString class]],
 				 @"We're expecting to have a non-nil NSString object here.");
-		
+
         NSArray* components = [self componentsFromParameter:parameter];
         NSAssert([components count] == 2,
                  @"We're expecting exactly two components here.");
-		
+
 		block([components objectAtIndex:0], [components objectAtIndex:1]);
 	}
-	
+
 	if (onCompleteBlock) {
 		onCompleteBlock();
 	}
@@ -1086,9 +1093,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (NSArray*)parametersFromCallbackURL:(NSURL*)url
 {
 	NSParameterAssert([url isKindOfClass:[NSURL class]]);
-	
+
 	NSArray* parameters = [[url resourceSpecifier] componentsSeparatedByString:kDefaultCallbackParameterSeparator];
-	
+
 	return parameters;
 }
 
@@ -1109,25 +1116,25 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
     NSAssert([fieldId isKindOfClass:[NSString class]],
              @"We're expecting a non-nil NSString object here.");
-    
+
     WPEditorField* newField = nil;
-    
+
     if ([fieldId isEqualToString:kWPEditorViewFieldTitleId]) {
         NSAssert(!_titleField,
                  @"We should never have to set this twice.");
-        
+
         _titleField = [[WPEditorField alloc] initWithId:fieldId webView:self.webView];
         newField = self.titleField;
     } else if ([fieldId isEqualToString:kWPEditorViewFieldContentId]) {
         NSAssert(!_contentField,
                  @"We should never have to set this twice.");
-        
+
         _contentField = [[WPEditorField alloc] initWithId:fieldId webView:self.webView];
         newField = self.contentField;
     }
     NSAssert([newField isKindOfClass:[WPEditorField class]],
              @"A new field should've been created here.");
-    
+
     return newField;
 }
 
@@ -1147,7 +1154,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     html = [html stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
     html = [html stringByReplacingOccurrencesOfString:@"\r"  withString:@"\\r"];
     html = [html stringByReplacingOccurrencesOfString:@"\n"  withString:@"\\n"];
-    
+
     return html;
 }
 
@@ -1163,14 +1170,14 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)undo
 {
     [self.webView stringByEvaluatingJavaScriptFromString:@"ZSSEditor.undo();"];
-	
+
     [self callDelegateEditorTextDidChange];
 }
 
 - (void)redo
 {
     [self.webView stringByEvaluatingJavaScriptFromString:@"ZSSEditor.redo();"];
-	
+
     [self callDelegateEditorTextDidChange];
 }
 
@@ -1179,26 +1186,26 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (NSString*)contents
 {
     NSString* contents = nil;
-    
+
     if ([self isInVisualMode]) {
         contents = [self.contentField html];
     } else {
         contents =  self.sourceView.text;
     }
-    
+
     return contents;
 }
 
 - (NSString*)title
 {
     NSString* title = nil;
-    
+
     if ([self isInVisualMode]) {
         title = [self.titleField strippedHtml];
     } else {
         title =  self.sourceViewTitleField.text;
     }
-    
+
     return title;
 }
 
@@ -1211,72 +1218,72 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)scrollToCaretAnimated:(BOOL)animated
 {
     BOOL notEnoughInfoToScroll = self.caretYOffset == nil || self.lineHeight == nil;
-    
+
     if (notEnoughInfoToScroll) {
         return;
     }
-    
+
     CGRect viewport = [self viewport];
     CGFloat caretYOffset = [self.caretYOffset floatValue];
     CGFloat lineHeight = [self.lineHeight floatValue];
     CGFloat offsetBottom = caretYOffset + lineHeight + 80;
-    
+
     BOOL mustScroll = (caretYOffset < viewport.origin.y
                        || offsetBottom > viewport.origin.y + CGRectGetHeight(viewport));
-    
+
     if (mustScroll) {
         // DRM: by reducing the necessary height we avoid an issue that moves the caret out
         // of view.
         //
         CGFloat necessaryHeight = (viewport.size.height / 2);
-        
+
         // DRM: just make sure we don't go out of bounds with the desired yOffset.
         //
         caretYOffset = MIN(caretYOffset,
                            self.webView.scrollView.contentSize.height - necessaryHeight);
-        
+
         CGRect targetRect = CGRectMake(0.0f,
                                        caretYOffset,
                                        CGRectGetWidth(viewport),
                                        necessaryHeight);
-        
+
         [self.webView.scrollView scrollRectToVisible:targetRect animated:animated];
-        
+
     }
 }
 
 - (void)scrollToEnd:(BOOL)animated
 {
     BOOL notEnoughInfoToScroll = self.caretYOffset == nil || self.lineHeight == nil;
-    
+
     if (notEnoughInfoToScroll) {
         return;
     }
-    
+
     CGRect viewport = [self viewport];
     CGFloat caretYOffset =  self.webView.scrollView.contentSize.height; //[self.caretYOffset floatValue];
     CGFloat lineHeight = [self.lineHeight floatValue];
     CGFloat offsetBottom = caretYOffset + lineHeight + 80;
-    
+
     BOOL mustScroll = (caretYOffset < viewport.origin.y
                        || offsetBottom > viewport.origin.y + CGRectGetHeight(viewport));
-    
+
     if (mustScroll) {
         // DRM: by reducing the necessary height we avoid an issue that moves the caret out
         // of view.
         //
         CGFloat necessaryHeight = (viewport.size.height / 2);
-        
+
         // DRM: just make sure we don't go out of bounds with the desired yOffset.
         //
         caretYOffset = MIN(caretYOffset,
                            self.webView.scrollView.contentSize.height - necessaryHeight);
-        
+
         CGRect targetRect = CGRectMake(0.0f,
                                        caretYOffset,
                                        CGRectGetWidth(viewport),
                                        necessaryHeight);
-        
+
         [self.webView.scrollView scrollRectToVisible:targetRect animated:animated];
     }
 }
@@ -1293,7 +1300,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
         [self.sourceView setSelectedRange:self.selectionBackup];
         self.selectionBackup = NSMakeRange(0, 0);
     }
-    
+
 }
 
 - (void)saveSelection
@@ -1314,7 +1321,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
         NSRange range = [self.sourceView selectedRange];
         selectedText = [self.sourceView.text substringWithRange:range];
     }
-    
+
 	return selectedText;
 }
 
@@ -1327,9 +1334,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     } else if (tag == 2) {
         trigger = [NSString stringWithFormat:@"ZSSEditor.setBackgroundColor(\"%@\");", hex];
     }
-	
+
 	[self.webView stringByEvaluatingJavaScriptFromString:trigger];
-	
+
     [self callDelegateEditorTextDidChange];
 }
 
@@ -1409,14 +1416,14 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
     static NSString* const kDefaultScheme = @"http://";
     static NSString* const kURLSchemePrefix = @"://";
-    
+
     NSString* normalizedURL = url;
     NSRange substringRange = [url rangeOfString:kURLSchemePrefix];
 
     if (substringRange.length == 0) {
         normalizedURL = [kDefaultScheme stringByAppendingString:url];
     }
-    
+
     return normalizedURL;
 }
 
@@ -1427,9 +1434,9 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
 	NSParameterAssert([url isKindOfClass:[NSString class]]);
 	NSParameterAssert([title isKindOfClass:[NSString class]]);
-	
+
     url = [self normalizeURL:url];
-    
+
     if (self.isInVisualMode) {
         NSString *trigger = [NSString stringWithFormat:@"ZSSEditor.insertLink(\"%@\",\"%@\");", url, title];
         [self.webView stringByEvaluatingJavaScriptFromString:trigger];
@@ -1438,7 +1445,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
         [self.sourceView insertText:aTagText];
         [self.sourceView becomeFirstResponder];
     }
-		
+
     [self callDelegateEditorTextDidChange];
 }
 
@@ -1453,14 +1460,14 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 	NSAssert(self.isInVisualMode, @"Editor must be in visual mode when calling this method.");
     NSParameterAssert([url isKindOfClass:[NSString class]]);
 	NSParameterAssert([title isKindOfClass:[NSString class]]);
-    
+
     url = [self normalizeURL:url];
-    
+
     if (self.isInVisualMode) {
         NSString *trigger = [NSString stringWithFormat:@"ZSSEditor.updateLink(\"%@\",\"%@\");", url, title];
         [self.webView stringByEvaluatingJavaScriptFromString:trigger];
     }
-    
+
     [self callDelegateEditorTextDidChange];
 }
 
@@ -1502,7 +1509,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
         prefix = [NSString stringWithFormat:@"<%@>", tag];
         suffix = [NSString stringWithFormat:@"</%@>", tag];
     }
-    
+
     NSString *replacement = [NSString stringWithFormat:@"%@%@%@",prefix,selection,suffix];
     [self.sourceView insertText:replacement];
 }
@@ -1528,11 +1535,11 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     self.sourceViewTitleField.hidden = NO;
     self.sourceContentDividerView.hidden = NO;
 	self.webView.hidden = YES;
-    
+
     [self.sourceView becomeFirstResponder];
     UITextPosition* position = [self.sourceView positionFromPosition:[self.sourceView beginningOfDocument]
                                                               offset:0];
-    
+
     [self.sourceView setSelectedTextRange:[self.sourceView textRangeFromPosition:position toPosition:position]];
 }
 
@@ -1544,7 +1551,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     self.sourceViewTitleField.hidden = YES;
     self.sourceContentDividerView.hidden = YES;
 	self.webView.hidden = NO;
-    
+
     [self.contentField focus];
 }
 
@@ -1555,7 +1562,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     if (!self.sourceView.hidden) {
         [self showVisualEditor];
     }
-    
+
     [self.titleField disableEditing];
     [self.contentField disableEditing];
     [self.sourceViewTitleField setEnabled:NO];
@@ -1576,7 +1583,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 {
     NSString *trigger = @"ZSSEditor.setJustifyLeft();";
 	[self.webView stringByEvaluatingJavaScriptFromString:trigger];
-    
+
     [self callDelegateEditorTextDidChange];
 }
 
@@ -1612,7 +1619,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     } else {
         [self wrapSourceViewSelectionWithTag:@"b"];
     }
-    
+
     [self callDelegateEditorTextDidChange];
 }
 
@@ -1624,7 +1631,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     } else {
         [self wrapSourceViewSelectionWithTag:@"blockquote"];
     }
-    
+
     [self callDelegateEditorTextDidChange];
 }
 
@@ -1636,7 +1643,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     } else {
         [self wrapSourceViewSelectionWithTag:@"i"];
     }
-    
+
     [self callDelegateEditorTextDidChange];
 }
 
@@ -1656,7 +1663,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     } else {
         [self wrapSourceViewSelectionWithTag:@"u"];
     }
-    
+
     [self callDelegateEditorTextDidChange];
 }
 
@@ -1851,7 +1858,7 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 - (void)callDelegateFieldCreated:(WPEditorField*)field
 {
     NSParameterAssert([field isKindOfClass:[WPEditorField class]]);
-    
+
     if ([self.delegate respondsToSelector:@selector(editorView:fieldCreated:)]) {
         [self.delegate editorView:self fieldCreated:field];
     }

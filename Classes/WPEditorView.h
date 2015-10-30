@@ -358,4 +358,7 @@ stylesForCurrentSelection:(NSArray*)styles;
 - (void)heading6;
 - (void)removeFormat;
 
+#pragma mark - height
+- (long)contentHeight;
+
 @end
