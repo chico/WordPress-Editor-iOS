@@ -845,7 +845,8 @@ function style_html(html_source, options) {
         }
 
         p {
-            line-height: 30px;
+        		/* line-height not needed, causes text misalignment in note body */
+            /*line-height: 30px;*/
             margin-top: 0px;
             margin-bottom: 5px;
         }
@@ -1100,7 +1101,8 @@ function style_html(html_source, options) {
 
         .ipad_field_content {
             font-size: 1.3em;
-            line-height: 28px;
+            /* line-height probably not needed */
+            /*line-height: 28px;*/
         }
     }
 
