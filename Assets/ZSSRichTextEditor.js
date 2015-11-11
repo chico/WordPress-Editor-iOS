@@ -92,6 +92,17 @@ ZSSEditor.init = function() {
                               }
                               }, false);
 
+    // If tapping outside of note body and not in edit mode then go into edit mode. Hacky but it works :)
+    $(document).on('touchstart', function(e) {
+        var t = $(e.target);
+        var nodeName = e.target.nodeName.toLowerCase();
+        if (nodeName == "html" && !$('#zss_field_content').is(":focus")) {
+            $('#zss_field_content').focus();
+            // TODO Fix position of caret to end of text, not sure why below code is not working :/
+            // $('#zss_field_content').selectRange(1);
+        }
+    });
+
 }; //end
 
 // MARK: - Debugging logs
