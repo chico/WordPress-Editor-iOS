@@ -97,9 +97,7 @@ ZSSEditor.init = function() {
         var t = $(e.target);
         var nodeName = e.target.nodeName.toLowerCase();
         if (nodeName == "html" && !$('#zss_field_content').is(":focus")) {
-            $('#zss_field_content').focus();
-            // TODO Fix position of caret to end of text, not sure why below code is not working :/
-            // $('#zss_field_content').selectRange(1);
+            ZSSEditor.placeCaretAtEnd(document.getElementById("zss_field_content"));
         }
     });
 
@@ -187,6 +185,26 @@ ZSSEditor.getFocusedField = function() {
 ZSSEditor.log = function(msg) {
     ZSSEditor.callback('callback-log', 'msg=' + msg);
 };
+
+// MARL: - place caret
+
+ZSSEditor.placeCaretAtEnd = function(el) {
+    el.focus();
+    if (typeof window.getSelection != "undefined"
+        && typeof document.createRange != "undefined") {
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    } else if (typeof document.body.createTextRange != "undefined") {
+        var textRange = document.body.createTextRange();
+        textRange.moveToElementText(el);
+        textRange.collapse(false);
+        textRange.select();
+    }
+}
 
 // MARK: - Callbacks
 
