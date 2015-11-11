@@ -483,11 +483,20 @@ static NSString* const WPEditorViewWebViewContentSizeKey = @"contentSize";
     self.webView.scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.frame), newHeight);
 }
 
+#pragma mark - height
+
 - (long)contentHeight
 {
     NSString* newHeightString = [self.webView stringByEvaluatingJavaScriptFromString:@"$('#zss_field_content').height();"];
     NSInteger newHeight = [newHeightString integerValue];
     return newHeight;
+}
+
+#pragma mark - place caret
+
+- (void)placeCaretAtEndOfNoteBody
+{
+    [self.webView stringByEvaluatingJavaScriptFromString:@"ZSSEditor.placeCaretAtEnd(document.getElementById('zss_field_content'));"];
 }
 
 #pragma mark - UIWebViewDelegate

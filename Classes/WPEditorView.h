@@ -361,4 +361,7 @@ stylesForCurrentSelection:(NSArray*)styles;
 #pragma mark - height
 - (long)contentHeight;
 
+#pragma mark - place caret
+- (void)placeCaretAtEndOfNoteBody;
+
 @end
