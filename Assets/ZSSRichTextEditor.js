@@ -92,13 +92,22 @@ ZSSEditor.init = function() {
                               }
                               }, false);
 
-    // If tapping outside of note body and not in edit mode then go into edit mode. Hacky but it works :)
-    $(document).on('touchstart', function(e) {
-        var t = $(e.target);
-        var nodeName = e.target.nodeName.toLowerCase();
-        if (nodeName == "html" && !$('#zss_field_content').is(":focus")) {
-            ZSSEditor.placeCaretAtEnd(document.getElementById("zss_field_content"));
+    // If single tapping outside of note body and not in edit mode then go into edit mode. Hacky but it works :)
+    var touchmoved;
+    $(document).on('touchend', function(e){
+        // Intercept single tap but not slide gestures
+        if(touchmoved != true){
+            var t = $(e.target);
+            var nodeName = e.target.nodeName.toLowerCase();
+            // If tap is on html element (i.e. outside note body) then go into edit mode and place caret at end of note body
+            if (nodeName == "html" && !$('#zss_field_content').is(":focus")) {
+                ZSSEditor.placeCaretAtEnd(document.getElementById("zss_field_content"));
+            }
         }
+    }).on('touchmove', function(e){
+        touchmoved = true;
+    }).on('touchstart', function(){
+        touchmoved = false;
     });
 
 }; //end
