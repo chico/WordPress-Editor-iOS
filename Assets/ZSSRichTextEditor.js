@@ -94,20 +94,36 @@ ZSSEditor.init = function() {
 
     // If single tapping outside of note body and not in edit mode then go into edit mode. Hacky but it works :)
     var touchmoved;
+    var touchTarget;
+    var touchTargetOffsetX;
     $(document).on('touchend', function(e){
+
         // Intercept single tap but not slide gestures
         if(touchmoved != true){
-            var t = $(e.target);
+
             var nodeName = e.target.nodeName.toLowerCase();
+
             // If tap is on html element (i.e. outside note body) then go into edit mode and place caret at end of note body
             if (nodeName == "html" && !$('#zss_field_content').is(":focus")) {
                 ZSSEditor.placeCaretAtEnd(document.getElementById("zss_field_content"));
+
+            // If tap is on li element and within bullet point area and in EDIT mode then toggle selected class
+            } else if (nodeName == "li" && touchTargetOffsetX <= 30 && $('#zss_field_content').is(":focus")) {
+                if ($(touchTarget).hasClass('selected')) {
+                    $(touchTarget).removeClass('selected');
+                } else {
+                    $(touchTarget).addClass('selected');
+                }
+                e.preventDefault();
+                e.stopPropagation();
             }
         }
     }).on('touchmove', function(e){
         touchmoved = true;
-    }).on('touchstart', function(){
+    }).on('touchstart', function(e){
+        touchTarget = e.target;
         touchmoved = false;
+        touchTargetOffsetX = e.originalEvent.touches[0].pageX - e.originalEvent.touches[0].target.offsetLeft;
     });
 
 }; //end
@@ -572,6 +588,13 @@ ZSSEditor.setOrderedList = function() {
 
 ZSSEditor.setUnorderedList = function() {
     document.execCommand('insertUnorderedList', false, null);
+    ZSSEditor.sendEnabledStyles();
+};
+
+ZSSEditor.setCheckList = function() {
+    document.execCommand('insertUnorderedList', false, null);
+    var list = window.getSelection().focusNode.parentNode;
+    $(list).addClass("checklist");
     ZSSEditor.sendEnabledStyles();
 };
 
@@ -1464,6 +1487,7 @@ ZSSEditor.sendEnabledStyles = function(e) {
         // Find all relevant parent tags
         var parentTags = ZSSEditor.parentTags();
 
+        var isCheckList = false;
         for (var i = 0; i < parentTags.length; i++) {
             var currentNode = parentTags[i];
 
@@ -1477,6 +1501,13 @@ ZSSEditor.sendEnabledStyles = function(e) {
                 items.push('link:' + href);
             } else if (currentNode.nodeName.toLowerCase() == 'blockquote') {
                 items.push('blockquote');
+
+            // Check for ul of type checklist
+            } else if (currentNode.nodeName.toLowerCase() == 'ul') {
+                if ($(currentNode).hasClass('checklist')) {
+                    items.push('checkList');
+                    isCheckList = true;
+                }
             }
         }
 
@@ -1510,7 +1541,7 @@ ZSSEditor.sendEnabledStyles = function(e) {
         if (ZSSEditor.isCommandEnabled('insertOrderedList')) {
             items.push('orderedList');
         }
-        if (ZSSEditor.isCommandEnabled('insertUnorderedList')) {
+        if (ZSSEditor.isCommandEnabled('insertUnorderedList') && !isCheckList) {
             items.push('unorderedList');
         }
         if (ZSSEditor.isCommandEnabled('justifyCenter')) {

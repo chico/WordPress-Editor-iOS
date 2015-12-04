@@ -347,6 +347,7 @@ stylesForCurrentSelection:(NSArray*)styles;
 - (void)setStrikethrough;
 - (void)setUnorderedList;
 - (void)setOrderedList;
+- (void)setCheckList;
 - (void)setHR;
 - (void)setIndent;
 - (void)setOutdent;

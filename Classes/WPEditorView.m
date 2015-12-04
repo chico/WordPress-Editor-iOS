@@ -1720,6 +1720,18 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     [self callDelegateEditorTextDidChange];
 }
 
+- (void)setCheckList
+{
+    if (self.isInVisualMode) {
+        NSString *trigger = @"ZSSEditor.setCheckList();";
+        [self.webView stringByEvaluatingJavaScriptFromString:trigger];
+    } else {
+        [self wrapSourceViewSelectionWithTag:@"ul"];
+    }
+
+    [self callDelegateEditorTextDidChange];
+}
+
 - (void)setHR
 {
     NSString *trigger = @"ZSSEditor.setHorizontalRule();";

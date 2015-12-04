@@ -41,6 +41,7 @@ typedef NS_ENUM(NSInteger, ZSSRichTextEditorToolbar) {
     ZSSRichTextEditorToolbarBlockQuote = 1 << 30,
     ZSSRichTextEditorToolbarAll = 1 << 31,
     ZSSRichTextEditorToolbarNone = 1 << 32,
+    ZSSRichTextEditorToolbarCheckList = 1 << 33,
 };
 
 typedef enum
@@ -78,7 +79,8 @@ typedef enum
     kWPEditorViewControllerElementUnderlineBarButton,
     kWPEditorViewControllerElementUnorderedListBarButton,
     kWPEditorViewControllerElementUndoBarButton,
-    
+    kWPEditorViewControllerElementCheckListBarButton,
+
 } WPEditorViewControllerElementTag;
 
 @protocol WPEditorToolbarViewDelegate <NSObject>

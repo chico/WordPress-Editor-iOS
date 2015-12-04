@@ -857,6 +857,37 @@ function style_html(html_source, options) {
 
         ul {
         	margin: 0 !important;
+        	padding-left: 36px;
+        }
+
+        ul li {
+        	padding-left: 4px;
+        }
+
+        ul.checklist {
+        	list-style: none;
+        	padding-left: 40px;
+        }
+
+        ul.checklist li {
+        	position: relative;
+        	padding-left: 0;
+        }
+
+        ul.checklist li:before {
+        	font-size: 22px;
+					font-family:Comic Sans MS;
+        	content: '\25EF';
+          position: absolute;
+	    		left: -38px;
+	    		top: -2px;
+        }
+
+        ul.checklist li.selected:before {
+        	font-size: 26px;
+        	left: -40px;
+        	top: -4px;
+          content: '\25C9';
         }
 
         hr {

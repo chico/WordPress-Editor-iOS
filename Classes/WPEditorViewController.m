@@ -55,32 +55,32 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super initWithCoder:aDecoder];
-    
+
     if (self)
     {
         [self sharedInitializationWithEditing:YES];
     }
-    
+
     return self;
 }
 
 - (instancetype)initWithMode:(WPEditorViewControllerMode)mode
 {
     self = [super init];
-    
+
     if (self) {
-        
+
         BOOL editing = NO;
-        
+
         if (mode == kWPEditorViewControllerModePreview) {
             editing = NO;
         } else {
             editing = YES;
         }
-        
+
         [self sharedInitializationWithEditing:editing];
     }
-    
+
     return self;
 }
 
@@ -100,25 +100,25 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)createToolbarView
 {
     NSAssert(!_toolbarView, @"The toolbar view should not exist here.");
-    
+
     CGRect toolbarFrame = CGRectMake(0,
                                      0,
                                      CGRectGetWidth(self.view.frame),
                                      [WPEditorToolbarView height]);
-    
+
     _toolbarView = [[WPEditorToolbarView alloc] initWithFrame:toolbarFrame];
     _toolbarView.delegate = self;
-    
+
     _toolbarView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     _toolbarView.backgroundColor = [UIColor clearColor];
     _toolbarView.borderColor = [WPStyleGuide readGrey];
     _toolbarView.itemTintColor = [WPStyleGuide textFieldPlaceholderGrey];
     _toolbarView.selectedItemTintColor = [WPStyleGuide baseDarkerBlue];
-    
+
     _toolbarView.items = [self itemsForToolbar];
-    
+
     //[_toolbarView buildRightToolbar:self.fontAwesome imageString:[self.arrIcons objectAtIndex:5]];
-    
+
     [self buildTextViews];
 }
 
@@ -137,32 +137,32 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     // It's important to set this up here, in case the main view of the VC is unloaded due to low
     // memory (it can happen if the view is hidden).
     //
     self.isFirstSetupComplete = NO;
     self.didFinishLoadingEditor = NO;
     self.view.backgroundColor = [UIColor clearColor];
-    
+
     // Calling the fonts we use here so they are availible to the UIWebView
     [WPFontManager merriweatherBoldFontOfSize:30];
     [WPFontManager openSansRegularFontOfSize:16];
     [WPFontManager openSansItalicFontOfSize:16];
     [WPFontManager openSansBoldFontOfSize:16];
     [WPFontManager openSansBoldItalicFontOfSize:16];
-    
+
     //[self createToolbarView];
     self.toolbar = [[UIToolbar alloc] init];
     [self.toolbar setBarStyle:UIBarStyleBlackTranslucent];
     [self.toolbar sizeToFit];
-    
+
     UIBarButtonItem *flexButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     UIBarButtonItem *doneButton =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(resignKeyboard)];
-    
+
     NSArray *itemsArray = [NSArray arrayWithObjects:flexButton, doneButton, nil];
     [self.toolbar setItems:itemsArray];
-    
+
     [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:@[]]];
 }
 
@@ -173,23 +173,23 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+
     if (!self.isFirstSetupComplete) {
         self.isFirstSetupComplete = YES;
-        
+
         // When restoring state, the navigationController is nil when the view loads,
         // so configure its appearance here instead.
         self.navigationController.navigationBar.translucent = NO;
-        
+
         for (UIView *view in self.navigationController.toolbar.subviews) {
             [view setExclusiveTouch:YES];
         }
-        
+
         if (self.isEditing) {
             [self startEditing];
         }
     }
-    
+
     [self.navigationController setToolbarHidden:YES animated:animated];
 }
 
@@ -198,13 +198,13 @@ NSInteger const WPLinkAlertViewTag = 92;
     if (self.isFirstSetupComplete) {
         [self restoreEditSelection];
     }
-    
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    
+
     // It's important to save the edit selection before the view disappears, because as soon as it
     // disappears the first responder is changed.
     //
@@ -233,152 +233,153 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (NSMutableArray *)itemsForToolbar
 {
     NSMutableArray *items = [[NSMutableArray alloc] init];
-    
+
     if ([self.toolbarView hasSomeEnabledToolbarItems]) {
         [items addObject:[self boldBarButton:[self.arrIcons objectAtIndex:0]]];
         [items addObject:[self italicBarButton:[self.arrIcons objectAtIndex:1]]];
         [items addObject:[self unorderedListBarButton:[self.arrIcons objectAtIndex:2]]];
         [items addObject:[self orderedListBarButton:[self.arrIcons objectAtIndex:3]]];
+        [items addObject:[self checkListBarButton:[self.arrIcons objectAtIndex:5]]];
         [items addObject:[self inserLinkBarButton:[self.arrIcons objectAtIndex:4]]];
 //        [items addObject:[self insertImageBarButton:[self.arrIcons objectAtIndex:5]]];
-//        
+//
 //        if ([self canShowInsertImageBarButton]) {
 //            [items addObject:[self insertImageBarButton]];
 //        }
-//        
+//
 //        if ([self canShowBoldBarButton]) {
 //            [items addObject:[self boldBarButton]];
 //        }
-//        
+//
 //        if ([self canShowItalicBarButton]) {
 //            [items addObject:[self italicBarButton]];
 //        }
-//        
+//
 //        if ([self canShowSubscriptBarButton]) {
 //            [items addObject:[self subscriptBarButton]];
 //        }
-//        
+//
 //        if ([self canShowSuperscriptBarButton]) {
 //            [items addObject:[self superscriptBarButton]];
 //        }
-//        
+//
 //        if ([self canShowStrikeThroughBarButton]) {
 //            [items addObject:[self strikeThroughBarButton]];
 //        }
-//        
+//
 //        if ([self canShowUnderlineBarButton]) {
 //            [items addObject:[self underlineBarButton]];
 //        }
-//        
+//
 //        if (!IS_IPAD && [self canShowBlockQuoteBarButton]) {
 //            [items addObject:[self blockQuoteBarButton]];
 //        }
-//        
+//
 //        if ([self canShowRemoveFormatBarButton]) {
 //            [items addObject:[self removeFormatBarButton]];
 //        }
-//        
+//
 //        if ([self canShowUndoBarButton]) {
 //            [items addObject:[self undoBarButton]];
 //        }
-//        
+//
 //        if ([self canShowRedoBarButton]) {
 //            [items addObject:[self redoBarButton]];
 //        }
-//        
+//
 //        if ([self canShowAlignLeftBarButton]) {
 //            [items addObject:[self alignLeftBarButton]];
 //        }
-//        
+//
 //        if ([self canShowAlignCenterBarButton]) {
 //            [items addObject:[self alignCenterBarButton]];
 //        }
-//        
+//
 //        if ([self canShowAlignRightBarButton]) {
 //            [items addObject:[self alignRightBarButton]];
 //        }
-//        
+//
 //        if ([self canShowAlignFullBarButton]) {
 //            [items addObject:[self alignFullBarButton]];
 //        }
-//        
+//
 //        if ([self canShowHeader1BarButton]) {
 //            [items addObject:[self header1BarButton]];
 //        }
-//        
+//
 //        if ([self canShowHeader2BarButton]) {
 //            [items addObject:[self header2BarButton]];
 //        }
-//        
+//
 //        if ([self canShowHeader3BarButton]) {
 //            [items addObject:[self header3BarButton]];
 //        }
-//        
+//
 //        if ([self canShowHeader4BarButton]) {
 //            [items addObject:[self header4BarButton]];
 //        }
-//        
+//
 //        if ([self canShowHeader5BarButton]) {
 //            [items addObject:[self header5BarButton]];
 //        }
-//        
+//
 //        if ([self canShowHeader6BarButton]) {
 //            [items addObject:[self header6BarButton]];
 //        }
-//        
+//
 //        if ([self canShowTextColorBarButton]) {
 //            [items addObject:[self textColorBarButton]];
 //        }
-//        
+//
 //        if ([self canShowBackgroundColorBarButton]) {
 //            [items addObject:[self backgroundColorBarButton]];
 //        }
-//        
+//
 //        if (IS_IPAD && [self canShowInsertLinkBarButton]) {
 //            [items addObject:[self inserLinkBarButton]];
 //        }
-//        
+//
 //        if ([self canShowUnorderedListBarButton]) {
 //            [items addObject:[self unorderedListBarButton]];
 //        }
-//      
+//
 //        if ([self canShowOrderedListBarButton]) {
 //            [items addObject:[self orderedListBarButton]];
 //        }
-//        
+//
 //        if ([self canShowHorizontalRuleBarButton]) {
 //            [items addObject:[self horizontalRuleBarButton]];
 //        }
-//        
+//
 //        if ([self canShowIndentBarButton]) {
 //            [items addObject:[self indentBarButton]];
 //        }
-//        
+//
 //        if ([self canShowOutdentBarButton]) {
 //            [items addObject:[self outdentBarButton]];
 //        }
-//        
+//
 //        if (!IS_IPAD && [self canShowInsertLinkBarButton]) {
 //            [items addObject:[self inserLinkBarButton]];
 //        }
-//        
+//
 //        if (IS_IPAD && [self canShowBlockQuoteBarButton]) {
 //            [items addObject:[self blockQuoteBarButton]];
 //        }
-//        
+//
 //        if ([self canShowRemoveLinkBarButton]) {
 //            [items addObject:[self removeLinkBarButton]];
 //        }
-//        
+//
 //        if ([self canShowQuickLinkBarButton]) {
 //            [items addObject:[self quickLinkBarButton]];
 //        }
-//        
+//
 //        if ([self canShowSourceBarButton]) {
 //            [items addObject:[self showSourceBarButton]];
 //        }
     }
-    
+
     return items;
 }
 
@@ -556,6 +557,11 @@ NSInteger const WPLinkAlertViewTag = 92;
     return [self canShowToolbarOption:ZSSRichTextEditorToolbarUnorderedList];
 }
 
+- (BOOL)canShowCheckListBarButton
+{
+    return [self canShowToolbarOption:ZSSRichTextEditorToolbarUnorderedList];
+}
+
 #pragma mark - Toolbar: buttons
 
 - (ZSSBarButtonItem*)barButtonItemWithTag:(WPEditorViewControllerElementTag)tag
@@ -584,7 +590,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                         selector:@selector(alignLeft)
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
-    
+
     return barButtonItem;
 }
 
@@ -597,7 +603,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                         selector:@selector(alignCenter)
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
-    
+
     return barButtonItem;
 }
 
@@ -610,7 +616,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                         selector:@selector(alignFull)
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
-    
+
     return barButtonItem;
 }
 
@@ -623,7 +629,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                         selector:@selector(alignRight)
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
-    
+
     return barButtonItem;
 }
 
@@ -637,7 +643,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -645,7 +651,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Block Quote",
                                                      @"Accessibility label for block quote button on formatting toolbar.");
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementTagBlockQuoteBarButton
                                                     htmlProperty:@"blockquote"
                                                        imageName:@"icon_format_quote"
@@ -653,7 +659,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                                         selector:@selector(setBlockQuote)
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
-    
+
     return barButtonItem;
 }
 
@@ -661,7 +667,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Bold",
                                                      @"Accessibility label for bold button on formatting toolbar.");
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementTagBoldBarButton
                                                     htmlProperty:@"bold"
                                                        imageName:icon
@@ -670,7 +676,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -684,7 +690,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -698,7 +704,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -712,7 +718,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -739,7 +745,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -753,7 +759,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -767,7 +773,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -781,7 +787,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -789,7 +795,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Insert Image",
                                                      @"Accessibility label for insert image button on formatting toolbar.");
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementTagInsertImageBarButton
                                                     htmlProperty:@"image"
                                                        imageName:icon
@@ -798,7 +804,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -806,7 +812,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Insert Link",
                                                      @"Accessibility label for insert link button on formatting toolbar.");
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementTagInsertLinkBarButton
                                                     htmlProperty:@"link"
                                                        imageName:icon
@@ -815,7 +821,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -823,7 +829,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Italic",
                                                      @"Accessibility label for italic button on formatting toolbar.");
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementTagItalicBarButton
                                                     htmlProperty:@"italic"
                                                        imageName:icon
@@ -832,7 +838,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -840,7 +846,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Ordered List",
                                                      @"Accessibility label for ordered list button on formatting toolbar.");;
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementOrderedListBarButton
                                                     htmlProperty:@"orderedList"
                                                        imageName:icon
@@ -849,7 +855,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -863,7 +869,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -877,7 +883,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -891,7 +897,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -905,7 +911,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -913,7 +919,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Remove Link",
                                                      @"Accessibility label for remove link button on formatting toolbar.");
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementRemoveFormatBarButton
                                                     htmlProperty:@"link"
                                                        imageName:@"icon_format_unlink"
@@ -922,7 +928,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -930,7 +936,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"HTML",
                                                      @"Accessibility label for HTML button on formatting toolbar.");
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementShowSourceBarButton
                                                     htmlProperty:@"source"
                                                        imageName:@"icon_format_html"
@@ -939,7 +945,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -947,7 +953,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Strike Through",
                                                      @"Accessibility label for strikethrough button on formatting toolbar.");
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementStrikeThroughBarButton
                                                     htmlProperty:@"strikeThrough"
                                                        imageName:@"icon_format_strikethrough"
@@ -956,7 +962,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -970,7 +976,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -984,7 +990,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -998,7 +1004,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -1006,7 +1012,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Underline",
                                                      @"Accessibility label for underline button on formatting toolbar.");
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementUnderlineBarButton
                                                     htmlProperty:@"underline"
                                                        imageName:@"icon_format_underline"
@@ -1015,7 +1021,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -1023,7 +1029,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     NSString* accessibilityLabel = NSLocalizedString(@"Unordered List",
                                                      @"Accessibility label for unordered list button on formatting toolbar.");
-    
+
     ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementUnorderedListBarButton
                                                     htmlProperty:@"unorderedList"
                                                        imageName:icon
@@ -1032,7 +1038,24 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:accessibilityLabel
                                                             font:self.fontAwesome];
 
-    
+
+    return barButtonItem;
+}
+
+- (UIBarButtonItem*)checkListBarButton:(NSString *)icon
+{
+    NSString* accessibilityLabel = NSLocalizedString(@"Check List",
+                                                     @"Accessibility label for check list button on formatting toolbar.");
+
+    ZSSBarButtonItem *barButtonItem = [self barButtonItemWithTag:kWPEditorViewControllerElementCheckListBarButton
+                                                    htmlProperty:@"checkList"
+                                                       imageName:icon
+                                                          target:self
+                                                        selector:@selector(setCheckList)
+                                              accessibilityLabel:accessibilityLabel
+                                                            font:self.fontAwesome];
+
+
     return barButtonItem;
 }
 
@@ -1046,7 +1069,7 @@ NSInteger const WPLinkAlertViewTag = 92;
                                               accessibilityLabel:nil
                                                             font:self.fontAwesome];
 
-    
+
     return barButtonItem;
 }
 
@@ -1057,9 +1080,9 @@ NSInteger const WPLinkAlertViewTag = 92;
     if (!self.editorView) {
         CGFloat viewWidth = CGRectGetWidth(self.view.frame);
         UIViewAutoresizing mask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        
+
         CGRect frame = CGRectMake(0.0f, 0.0f, viewWidth, CGRectGetHeight(self.view.frame));
-        
+
         self.editorView = [[WPEditorView alloc] initWithFrame:frame];
         self.editorView.delegate = self;
         self.editorView.autoresizesSubviews = YES;
@@ -1071,16 +1094,16 @@ NSInteger const WPLinkAlertViewTag = 92;
         [self.view addSubview:self.toolbarView];
         self.toolbarView.hidden = YES;
         self.toolbarView.backgroundColor = [UIColor clearColor]; //colorWithRed:161.0/255.0 green:110.0/255.0 blue:109.0/255.0 alpha:1.0];
-        
+
         self.editorView.titleField.tag = 0;
-        
+
         self.editorView.contentField.tag = 1;
-        
+
         // Default placeholder text
         self.titlePlaceholderText = NSLocalizedString(@"Title",  @"Placeholder for the post title.");
         self.bodyPlaceholderText = NSLocalizedString(@"Type your note", @"Placeholder for the post body.");
     }
-    
+
     [self.view addSubview:self.editorView];
 }
 
@@ -1172,7 +1195,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)enableEditing
 {
     self.editingEnabled = YES;
-    
+
     if (self.didFinishLoadingEditor)
     {
         [self.editorView enableEditing];
@@ -1185,7 +1208,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)disableEditing
 {
     self.editingEnabled = NO;
-    
+
     if (self.didFinishLoadingEditor)
     {
         [self.editorView disableEditing];
@@ -1223,7 +1246,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)startEditing
 {
     self.editing = YES;
-    
+
     // We need the editor ready before executing the steps in the conditional block below.
     // If it's not ready, this method will be called again on webViewDidFinishLoad:
     //
@@ -1237,7 +1260,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)stopEditing
 {
     self.editing = NO;
-    
+
     [self disableEditing];
     [self tellOurDelegateEditingDidEnd];
 }
@@ -1269,10 +1292,10 @@ NSInteger const WPLinkAlertViewTag = 92;
 //        }
 //    } else {
 //        [self.editorView showVisualEditor];
-//        
+//
 //        barButtonItem.tintColor = [self.toolbarView itemTintColor];
 //    }
-//    
+//
 //    [WPAnalytics track:WPAnalyticsStatEditorTappedHTML];
 }
 
@@ -1360,6 +1383,13 @@ NSInteger const WPLinkAlertViewTag = 92;
     [WPAnalytics track:WPAnalyticsStatEditorTappedOrderedList];
 }
 
+- (void)setCheckList
+{
+    [self.editorView setCheckList];
+    [self clearToolbar];
+    [WPAnalytics track:WPAnalyticsStatEditorTappedUnorderedList];
+}
+
 - (void)setHR
 {
     [self.editorView setHR];
@@ -1409,7 +1439,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     // Save the selection location
     [self.editorView saveSelection];
-    
+
     // Call the picker
     HRColorPickerViewController *colorPicker = [HRColorPickerViewController cancelableFullColorPickerViewControllerWithColor:[UIColor whiteColor]];
     colorPicker.delegate = self;
@@ -1422,7 +1452,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 {
     // Save the selection location
     [self.editorView saveSelection];
-    
+
     // Call the picker
     HRColorPickerViewController *colorPicker = [HRColorPickerViewController cancelableFullColorPickerViewControllerWithColor:[UIColor whiteColor]];
     colorPicker.delegate = self;
@@ -1460,72 +1490,72 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)showInsertLinkDialogWithLink:(NSString*)url
                                title:(NSString*)title
 {
-    
+
     BOOL isInsertingNewLink = (url == nil);
-    
+
     if (!url) {
         NSURL* pasteboardUrl = [self urlFromPasteboard];
-        
+
         url = [pasteboardUrl absoluteString];
     }
-    
+
     NSString *insertButtonTitle = isInsertingNewLink ? NSLocalizedString(@"Insert", nil) : NSLocalizedString(@"Update", nil);
     NSString *removeButtonTitle = isInsertingNewLink ? nil : NSLocalizedString(@"Remove Link", nil);
-    
+
     self.alertView = [[UIAlertView alloc] initWithTitle:insertButtonTitle
                                                 message:nil
                                                delegate:self
                                       cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
                                       otherButtonTitles:insertButtonTitle, removeButtonTitle, nil];
-    
+
     // The reason why we're setting a login & password style, is that it's the only style that
     // supports having two edit fields.  We'll customize the password field to behave as we want.
     //
     self.alertView.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;
     self.alertView.tag = WPLinkAlertViewTag;
-    
+
     UITextField *linkURL = [self.alertView textFieldAtIndex:0];
-    
+
     linkURL.clearButtonMode = UITextFieldViewModeAlways;
     linkURL.placeholder = NSLocalizedString(@"URL", nil);
-    
+
     if (url) {
         linkURL.text = url;
     }
-    
+
     UITextField *linkNameTextField = [self.alertView textFieldAtIndex:1];
-    
+
     linkNameTextField.clearButtonMode = UITextFieldViewModeAlways;
     linkNameTextField.placeholder = NSLocalizedString(@"Link Name", nil);
     linkNameTextField.secureTextEntry = NO;
     linkNameTextField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
     linkNameTextField.autocorrectionType = UITextAutocorrectionTypeDefault;
     linkNameTextField.spellCheckingType = UITextSpellCheckingTypeDefault;
-    
+
     if (title) {
         linkNameTextField.text = title;
     }
-    
+
     __weak __typeof(self) weakSelf = self;
-    
+
     self.alertView.willPresentBlock = ^(UIAlertView* alertView) {
-        
+
         [weakSelf.editorView saveSelection];
         [weakSelf.editorView endEditing];
     };
-    
+
     self.alertView.didDismissBlock = ^(UIAlertView *alertView, NSInteger buttonIndex) {
         [weakSelf.editorView restoreSelection];
-        
+
         if (alertView.tag == WPLinkAlertViewTag) {
             if (buttonIndex == 1) {
                 NSString *linkURL = [alertView textFieldAtIndex:0].text;
                 NSString *linkTitle = [alertView textFieldAtIndex:1].text;
-                
+
                 if ([linkTitle length] == 0) {
                     linkTitle = linkURL;
                 }
-                
+
                 if (isInsertingNewLink) {
                     [weakSelf insertLink:linkURL title:linkTitle];
                 } else {
@@ -1536,7 +1566,7 @@ NSInteger const WPLinkAlertViewTag = 92;
             }
         }
     };
-    
+
     self.alertView.shouldEnableFirstOtherButtonBlock = ^BOOL(UIAlertView *alertView) {
         if (alertView.tag == WPLinkAlertViewTag) {
             UITextField *textField = [alertView textFieldAtIndex:0];
@@ -1546,7 +1576,7 @@ NSInteger const WPLinkAlertViewTag = 92;
         }
         return YES;
     };
-    
+
     [self.alertView show];
 }
 
@@ -1598,20 +1628,20 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (NSURL*)urlFromPasteboard
 {
     NSURL* url = nil;
-    
+
     UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
-    
+
     NSString* const kURLPasteboardType = (__bridge NSString*)kUTTypeURL;
     NSString* const kTextPasteboardType = (__bridge NSString*)kUTTypeText;
-    
+
     if ([pasteboard containsPasteboardTypes:@[kURLPasteboardType]]) {
         url = [pasteboard valueForPasteboardType:kURLPasteboardType];
     } else if ([pasteboard containsPasteboardTypes:@[kTextPasteboardType]]) {
         NSString* urlString = [pasteboard valueForPasteboardType:kTextPasteboardType];
-        
+
         url = [self urlFromStringOnlyIfValid:urlString];
     }
-    
+
     return url;
 }
 
@@ -1626,7 +1656,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (BOOL)isURLValid:(NSURL*)url
 {
     NSParameterAssert([url isKindOfClass:[NSURL class]]);
-    
+
     return url && url.scheme && url.host;
 }
 
@@ -1640,18 +1670,18 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (NSURL*)urlFromStringOnlyIfValid:(NSString*)urlString
 {
     NSParameterAssert([urlString isKindOfClass:[NSString class]]);
-    
+
     if ([urlString hasPrefix:@"www"]) {
         urlString = [self.editorView normalizeURL:urlString];
     }
-    
+
     NSURL* prevalidatedUrl = [NSURL URLWithString:urlString];
     NSURL* url = nil;
-    
+
     if (prevalidatedUrl && [self isURLValid:prevalidatedUrl]) {
         url = prevalidatedUrl;
     }
-    
+
     return url;
 }
 
@@ -1678,13 +1708,13 @@ NSInteger const WPLinkAlertViewTag = 92;
     // offline and the content has remote subcontent (such as pictures).
     //
     self.didFinishLoadingEditor = YES;
-    
+
     if (self.editing) {
         [self startEditing];
     } else {
         [self.editorView disableEditing];
     }
-    
+
     [self tellOurDelegateEditorDidFinishLoadingDOM];
 }
 
@@ -1695,7 +1725,7 @@ NSInteger const WPLinkAlertViewTag = 92;
         // field.inputAccessoryView = self.toolbarView;
     //    field.inputAccessoryView = self.toolbar;
         field.inputAccessoryView = self.keyboardControls;
-        
+
         [field setRightToLeftTextEnabled:[self isCurrentLanguageDirectionRTL]];
         [field setMultiline:NO];
         [field setPlaceholderColor:[UIColor colorWithHexString:@"F3E0DC"]]; //[WPStyleGuide allTAllShadeGrey]];
@@ -1705,19 +1735,19 @@ NSInteger const WPLinkAlertViewTag = 92;
     } else if (field == self.editorView.contentField) {
     //     field.inputAccessoryView = self.toolbar;
         //  field.inputAccessoryView = self.toolbarView;
-        
+
         //field.inputAccessoryView = self.keyboardControls;
-        
+
         [field setRightToLeftTextEnabled:[self isCurrentLanguageDirectionRTL]];
         [field setMultiline:YES];
         [field setPlaceholderText:self.bodyPlaceholderText];
         [field setPlaceholderColor:[UIColor colorWithHexString:@"F3E0DC"]];//[WPStyleGuide allTAllShadeGrey]];
-        
+
         self.keyboardControls.fields = [[NSMutableArray alloc]initWithObjects:self.editorView.contentField, nil];
         //self.keyboardControls.fields = @[self.editorView.contentField, self.editorView.contentField];
         //self.keyboardControls.activeField = [self.keyboardControls.fields objectAtIndex:0];
     }
-    
+
     if ([self.delegate respondsToSelector:@selector(editorViewController:fieldCreated:)]) {
         [self.delegate editorViewController:self fieldCreated:field];
     }
@@ -1744,7 +1774,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)editorView:(WPEditorView*)editorView sourceFieldFocused:(UIView*)view
 {
     [self.toolbarView enableToolbarItems:NO shouldShowSourceButton:YES];
-    
+
     // Enable the toolbar if the HTML editor has focus
     if (view == self.editorView.sourceView) {
         [self.toolbarView enableToolbarItems:YES shouldShowSourceButton:YES];
@@ -1760,14 +1790,14 @@ NSInteger const WPLinkAlertViewTag = 92;
     if (self.isEditing) {
         if (self.wasEditing && !self.isInitial) {
             self.wasEditing = NO;
-            
+
             [self showInsertLinkDialogWithLink:url.absoluteString
                                          title:title];
         }else{
             [self.delegate editorLinkPressed:url.absoluteString title:title];
         }
     }
-    
+
     return YES;
 }
 
@@ -1803,7 +1833,7 @@ NSInteger const WPLinkAlertViewTag = 92;
 - (void)editorView:(WPEditorView*)editorView stylesForCurrentSelection:(NSArray*)styles
 {
     self.editorItemsEnabled = styles;
-    
+
     [self.toolbarView selectToolbarItemsForStyles:styles];
 }
 
@@ -1839,7 +1869,7 @@ didFailLoadWithError:(NSError *)error
     if (self.toolbarView.itemTintColor) {
         return self.toolbarView.itemTintColor;
     }
-    
+
     return [WPStyleGuide allTAllShadeGrey];
 }
 
@@ -1862,7 +1892,7 @@ didFailLoadWithError:(NSError *)error
 {
     NSAssert(self.isEditing,
              @"Can't call this delegate method if not editing.");
-    
+
     if ([self.delegate respondsToSelector: @selector(editorDidBeginEditing:)]) {
         [self.delegate editorDidBeginEditing:self];
     }
@@ -1872,7 +1902,7 @@ didFailLoadWithError:(NSError *)error
 {
     NSAssert(!self.isEditing,
              @"Can't call this delegate method if editing.");
-    
+
     if ([self.delegate respondsToSelector: @selector(editorDidEndEditing:)]) {
         [self.delegate editorDidEndEditing:self];
     }
