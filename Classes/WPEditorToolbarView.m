@@ -223,10 +223,10 @@ static const CGFloat WPEditorToolbarButtonWidthiPad = 60;
 {
     CGRect subviewFrame = self.frame;
     subviewFrame.origin = CGPointZero;
-    
+    subviewFrame.size.height = WPEditorToolbarHeightiPad;
     UIView* mainToolbarHolderContent = [[UIView alloc] initWithFrame:subviewFrame];
     mainToolbarHolderContent.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
+    mainToolbarHolderContent.backgroundColor = [UIColor clearColor];
     subviewFrame.size.height = 1.0f;
     
     //  UIView* mainToolbarHolderTopBorder = [[UIView alloc] initWithFrame:subviewFrame];
@@ -245,17 +245,19 @@ static const CGFloat WPEditorToolbarButtonWidthiPad = 60;
     NSAssert(_toolbarScroll == nil, @"This is supposed to be called only once.");
     
     CGFloat scrollviewHeight = CGRectGetWidth(self.frame);
+    CGFloat toolbarHeight = WPEditorToolbarHeight;
     
     if (!IS_IPAD) {
         scrollviewHeight -= WPEditorToolbarButtonWidth;
+        toolbarHeight = WPEditorToolbarHeightiPad;
     }
     
     CGRect toolbarScrollFrame = CGRectMake(0,
                                            0,
                                            scrollviewHeight,
-                                           WPEditorToolbarHeight);
+                                           toolbarHeight);
     
-    UIScrollView* toolbarScroll = [[UIScrollView alloc] initWithFrame:toolbarScrollFrame];
+    UIScrollView* toolbarScroll = [[UIScrollView alloc] initWithFrame:self.contentView.frame];
     toolbarScroll.showsHorizontalScrollIndicator = NO;
     //if (IS_IPAD) {
     toolbarScroll.scrollEnabled = NO;
